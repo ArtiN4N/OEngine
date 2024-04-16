@@ -21,7 +21,7 @@ init_outLog :: proc() -> outLog {
 
     fmt.sbprintf(
         &builder, 
-        "----------INIT FRAME----------\nExecuted at time %4d:%2d:%2d - %2d:%2d:%2d\n------------------------------\n", 
+        "----------INIT FRAME----------\nExecuted at time %4d:%2d:%2d - %2d:%2d:%2d\n------------------------------\n\n", 
         time.date(curTime), (hour - 7) % 24, min, sec
     )
 
