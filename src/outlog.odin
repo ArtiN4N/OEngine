@@ -48,6 +48,14 @@ writeDataFreeToLog :: proc(using  out: ^outLog, filename: string) {
     fmt.sbprintf(&logBuilder, "Freed data from '%s'\n", filename)
 }
 
+writeAllocToLog :: proc(using  out: ^outLog, varname: string) {
+    fmt.sbprintf(&logBuilder, "Alloc'd memory to variable '%s'\n", varname)
+}
+
+writeAllocFreeToLog :: proc(using  out: ^outLog, varname: string) {
+    fmt.sbprintf(&logBuilder, "Freed memory from variable '%s'\n", varname)
+}
+
 writeLogToFile :: proc(using out: ^outLog) {
     fmt.sbprintf(
         &logBuilder, 
