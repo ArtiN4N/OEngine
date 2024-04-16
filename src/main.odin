@@ -25,7 +25,7 @@ main :: proc() {
         }
     }
 
-    frogSprite := init_Sprite(false, 1, 1, rl.Vector2{260, 200}, exceptionTexture, rl.Rectangle{0, 0, 1400, 896})
+    frogSprite := init_Sprite(false, 1, 1, rl.Vector2{1400, 896}, exceptionTexture, rl.Vector2{0, 0}, rl.Vector2{0, 0})
     loadSpriteTexture(&frogSprite, "resources/frog.png", &log)
 
     defer freeSpriteTexture(&frogSprite, "resources/frog.png", &log)
@@ -48,8 +48,8 @@ draw :: proc(frogSprite: Sprite) {
     rl.DrawTexturePro(
         frogSprite.texture, 
         getSpriteSourceRec(frogSprite), 
-        rl.Rectangle{100, 100, frogSprite.frameSize.x, frogSprite.frameSize.y}, 
-        rl.Vector2{0, 0}, 
+        rl.Rectangle{100, 100, 260, 200}, 
+        frogSprite.textureDestOffset, 
         0,
         rl.RAYWHITE
     )
