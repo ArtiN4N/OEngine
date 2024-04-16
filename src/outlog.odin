@@ -37,26 +37,32 @@ writeToLog :: proc(using out: ^outLog, data: string) {
 
 writeTextureLoadToLog :: proc(using out: ^outLog, filename: string) {
     fmt.sbprintf(&logBuilder, "Loaded texture data from '%s'\n", filename)
+    loads += 1
 }
 
 writeAudioLoadToLog :: proc(using out: ^outLog, filename: string) {
     fmt.sbprintf(&logBuilder, "Loaded audio data from '%s'\n", filename)
+    loads += 1
 }
 
 writeFileLoadToLog :: proc(using out: ^outLog, filename: string) {
     fmt.sbprintf(&logBuilder, "Loaded file data from '%s'\n", filename)
-}
-
-writeDataFreeToLog :: proc(using  out: ^outLog, filename: string) {
-    fmt.sbprintf(&logBuilder, "Freed data from '%s'\n", filename)
+    loads += 1
 }
 
 writeAllocToLog :: proc(using  out: ^outLog, varname: string) {
     fmt.sbprintf(&logBuilder, "Alloc'd memory to variable '%s'\n", varname)
+    loads += 1
+}
+
+writeDataFreeToLog :: proc(using  out: ^outLog, filename: string) {
+    fmt.sbprintf(&logBuilder, "Freed data from '%s'\n", filename)
+    frees += 1
 }
 
 writeAllocFreeToLog :: proc(using  out: ^outLog, varname: string) {
     fmt.sbprintf(&logBuilder, "Freed memory from variable '%s'\n", varname)
+    frees += 1
 }
 
 writeLogToFile :: proc(using out: ^outLog) {
