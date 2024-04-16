@@ -25,6 +25,9 @@ init_OutLog :: proc() -> OutLog {
         time.date(curTime), (hour - 7) % 24, min, sec
     )
 
+    initText: [^]u8
+    rl.SaveFileText("log.txt", initText)
+
     return {
         builder,
         0, 0
