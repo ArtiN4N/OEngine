@@ -25,15 +25,17 @@ main :: proc() {
     rl.SetTargetFPS(60)
 
     for !rl.WindowShouldClose() {
-        draw()
+        draw(frogTexture)
     }
 }
 
-draw :: proc() {
+draw :: proc(frogTexture: rl.Texture2D) {
     rl.BeginDrawing()
     defer rl.EndDrawing()
 
     rl.ClearBackground(rl.RAYWHITE)
+
+    rl.DrawTexture(frogTexture, 20, 20, rl.RAYWHITE)
 
     rl.DrawFPS(10, 10)
 }
