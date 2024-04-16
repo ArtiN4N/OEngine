@@ -19,14 +19,17 @@ init_outLog :: proc() -> outLog {
 
     hour, min, sec := time.clock_from_time(curTime)
 
-    fmt.sbprintf(&builder, "Executed at time %4d:%2d:%2d - %2d:%2d:%2d\n", time.date(curTime), (hour - 7) % 24, min, sec)
+    fmt.sbprintf(
+        &builder, 
+        "----------INIT FRAME----------\nExecuted at time %4d:%2d:%2d - %2d:%2d:%2d\n------------------------------\n", 
+        time.date(curTime), (hour - 7) % 24, min, sec
+    )
 
     return outLog {
         builder,
         0, 0
     }
 }
-
 
 writeToLog :: proc(using out: ^outLog, data: string) {
     strings.write_string(&logBuilder, data)
