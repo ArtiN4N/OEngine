@@ -8,6 +8,7 @@ Sprite :: struct {
     animated: bool,
 
     frames: int,
+    curFrame: int,
     // Describes how many frames should be read from the spritesheet from a specific row until the row is pushed downwards.
     // If framePeriod == frames, then all frames of a sprite exist on the same spritesheet row
     framePeriod: int,
@@ -25,8 +26,15 @@ init_Sprite :: proc(
 ) -> Sprite {
     return {
         animated,
-        frames, framePeriod, frameSize,
+        frames, 0, framePeriod, frameSize,
         texture, textureOffset, false,
+    }
+}
+
+getSpriteSourceRec :: proc(using sprite: Sprite) -> rl.Rectangle {
+    return rl.Rectangle{
+        textureOffset.x + textureOffset.width * auto_cast (curFrame % framePeriod), textureOffset.y + textureOffset.height * auto_cast (curFrame / framePeriod), 
+        textureOffset.width, textureOffset.height,
     }
 }
 
