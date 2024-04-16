@@ -7,6 +7,9 @@ main :: proc() {
     rl.InitWindow(400, 400, "OEdit")
     defer rl.CloseWindow()
 
+    frogTexture: rl.Texture2D = rl.LoadTexture("resources/frog.png") // Load data into VRAM (gpu)
+    defer rl.UnloadTexture(frogTexture)
+
     rl.SetTargetFPS(60)
 
     for !rl.WindowShouldClose() {
