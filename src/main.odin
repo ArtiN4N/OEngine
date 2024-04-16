@@ -1,6 +1,8 @@
 package main
 
 import "core:fmt"
+import "core:strings"
+
 import rl "vendor:raylib"
 
 main :: proc() {
@@ -11,6 +13,9 @@ main :: proc() {
     defer rl.UnloadTexture(frogTexture)
 
     rl.SetTargetFPS(60)
+
+    log := init_outLog()
+    defer writeLogToFile(&log)
 
     for !rl.WindowShouldClose() {
         draw()
