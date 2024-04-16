@@ -15,26 +15,30 @@ Sprite :: struct {
     frameSize: rl.Vector2,
 
     texture: rl.Texture2D,
-    textureOffset: rl.Rectangle,
+    textureSourceOffset: rl.Vector2,
+    textureDestOffset: rl.Vector2,
+
     textureLoaded: bool,
 }
 
 init_Sprite :: proc(
     animated: bool, 
     frames, framePeriod: int, frameSize: rl.Vector2,
-    texture: rl.Texture2D, textureOffset: rl.Rectangle,
+    texture: rl.Texture2D, textureSourceOffset: rl.Vector2, textureDestOffset: rl.Vector2
 ) -> Sprite {
     return {
         animated,
         frames, 0, framePeriod, frameSize,
-        texture, textureOffset, false,
+        texture, textureSourceOffset, textureDestOffset,
+        
+        false,
     }
 }
 
 getSpriteSourceRec :: proc(using sprite: Sprite) -> rl.Rectangle {
     return rl.Rectangle{
-        textureOffset.x + textureOffset.width * auto_cast (curFrame % framePeriod), textureOffset.y + textureOffset.height * auto_cast (curFrame / framePeriod), 
-        textureOffset.width, textureOffset.height,
+        textureSourceOffset.x + frameSize.x * auto_cast (curFrame % framePeriod), textureSourceOffset.y + frameSize.y * auto_cast (curFrame / framePeriod), 
+        frameSize.x, frameSize.y,
     }
 }
 
