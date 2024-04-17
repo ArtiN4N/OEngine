@@ -28,16 +28,19 @@ main :: proc() {
     }
 
     // TODO: Change sprite to use texture pointer instead, since we dont want to be making copies of textures
-    frogSprite := init_Sprite(rl.Vector2{700, 448}, exceptionTexture, rl.Vector2{0, 0}, rl.Vector2{0, 0})
+    frogSprite := init_Sprite(rl.Vector2{16, 16}, exceptionTexture, rl.Vector2{0, 0}, rl.Vector2{0, 0})
     
-    loadSpriteTexture(&frogSprite, "resources/frog.png", &log)
-    defer freeSpriteTexture(&frogSprite, "resources/frog.png", &log)
+    loadSpriteTexture(&frogSprite, "resources/frogsheet.png", &log)
+    defer freeSpriteTexture(&frogSprite, "resources/frogsheet.png", &log)
 
-    attachSpriteAnimationController(&frogSprite, 2, &log)
+    attachSpriteAnimationController(&frogSprite, &log)
     defer free_SpriteAnimationController(&frogSprite.animationController, &log)
     
-    addAnimationToSpriteController(&frogSprite.animationController, rl.Vector2{0, 0}, 2, 2, 2.0, "upper")
-    addAnimationToSpriteController(&frogSprite.animationController, rl.Vector2{0, 448}, 2, 2, -1.0, "lower")
+    addAnimationToSpriteController(&frogSprite.animationController, rl.Vector2{0, 0}, 2, 5, 2, 3.0, "idle")
+    addAnimationToSpriteController(&frogSprite.animationController, rl.Vector2{32, 0}, 3, 3, 3, 0.0, "smoke")
+    addAnimationToSpriteController(&frogSprite.animationController, rl.Vector2{0, 16}, 5, 5, 5, -1.0, "jump")
+
+    ChangeSpriteAnimation(&frogSprite.animationController, "idle")
 
     // -------------------------------------------
 
@@ -51,8 +54,16 @@ main :: proc() {
 
         timer += dt
 
-        if timer < 2.0 && timer + dt > 2.0 {
-            ChangeSpriteAnimation(&frogSprite.animationController, "upper")
+        if timer < 5.0 && timer + dt > 5.0 {
+            ChangeSpriteAnimation(&frogSprite.animationController, "smoke")
+        }
+
+        if timer < 10.0 && timer + dt > 10.0 {
+            ChangeSpriteAnimation(&frogSprite.animationController, "jump")
+        }
+
+        if timer < 12.0 && timer + dt > 12.0 {
+            ChangeSpriteAnimation(&frogSprite.animationController, "idle")
         }
 
         SpriteAnimationUpdate(&frogSprite.animationController, dt, &log)
