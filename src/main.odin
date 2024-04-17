@@ -6,6 +6,7 @@ import "core:strings"
 import rl "vendor:raylib"
 
 main :: proc() {
+
     // Initializing outlog struct to log debug information
     log := init_OutLog()
     defer writeLogToFile(&log)
@@ -15,9 +16,10 @@ main :: proc() {
 
     // TEXTURES ----------------------------------
 
-    // Creates a null texture
+    // Creates a null texture to be auto assigned to all sprites
     exceptionTexture := rl.LoadTexture("resources/exception.png")
     writeTextureLoadToLog(&log, "resources/exception.png", rl.IsTextureReady(exceptionTexture))
+
     defer {
         if rl.IsTextureReady(exceptionTexture) {
             rl.UnloadTexture(exceptionTexture)
@@ -25,6 +27,7 @@ main :: proc() {
         }
     }
 
+    // TODO: Change sprite to use texture pointer instead, since we dont want to be making copies of textures
     frogSprite := init_Sprite(rl.Vector2{700, 448}, exceptionTexture, rl.Vector2{0, 0}, rl.Vector2{0, 0})
     
     loadSpriteTexture(&frogSprite, "resources/frog.png", &log)
@@ -63,14 +66,7 @@ draw :: proc(frogSprite: Sprite) {
 
     rl.ClearBackground(rl.RAYWHITE)
     
-    rl.DrawTexturePro(
-        frogSprite.texture, 
-        getSpriteSourceRec(frogSprite), 
-        rl.Rectangle{100, 100, 260, 200}, 
-        frogSprite.textureDestOffset, 
-        0,
-        rl.RAYWHITE
-    )
+    drawSprite(frogSprite, 0)
 
     rl.DrawFPS(10, 10)
 }

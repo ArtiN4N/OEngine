@@ -122,6 +122,17 @@ getSpriteSourceRec :: proc(using sprite: Sprite) -> rl.Rectangle {
     }
 }
 
+drawSprite :: proc(using sprite: Sprite, rotation: f32) {
+    rl.DrawTexturePro(
+        texture,
+        getSpriteSourceRec(sprite), 
+        rl.Rectangle{100, 100, 260, 200}, 
+        textureDestOffset,
+        rotation,
+        rl.RAYWHITE
+    )
+}
+
 loadSpriteTexture :: proc(using sprite: ^Sprite, filename: string, log: ^OutLog) {
     texture = rl.LoadTexture(strings.clone_to_cstring(filename))
     textureLoaded = rl.IsTextureReady(texture)
