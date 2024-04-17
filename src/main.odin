@@ -44,6 +44,7 @@ main :: proc() {
 
     for !rl.WindowShouldClose() {
         dt := rl.GetFrameTime()
+        stepOutLog(&log, dt)
 
         timer += dt
 

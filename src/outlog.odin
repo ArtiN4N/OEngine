@@ -10,6 +10,7 @@ OutLog :: struct {
     logBuilder: strings.Builder,
     loads: int,
     frees: int,
+    timeElapsed: f32,
 }
 
 init_OutLog :: proc() -> OutLog {
@@ -30,45 +31,50 @@ init_OutLog :: proc() -> OutLog {
 
     return {
         builder,
-        0, 0
+        0, 0,
+        0.0
     }
 }
 
+stepOutLog :: proc(using out: ^OutLog, dt: f32) {
+    timeElapsed += dt
+}
+
 writeToLog :: proc(using out: ^OutLog, data: string) {
-    strings.write_string(&logBuilder, data)
+    fmt.sbprintf(&logBuilder, "%s -> logged at time %.2f\n", data, timeElapsed)
 }
 
 writeTextureLoadToLog :: proc(using out: ^OutLog, filename: string, success: bool) {
     if !success {
-        fmt.sbprintf(&logBuilder, "ERROR - Failed to load texture data from '%s'\n", filename)
+        writeToLog(out, fmt.tprintf("ERROR - Failed to load texture data from '%s'", filename))
         return
     }
-    fmt.sbprintf(&logBuilder, "Loaded texture data from '%s'\n", filename)
+    writeToLog(out, fmt.tprintf("Loaded texture data from '%s'", filename))
     loads += 1
 }
 
 writeAudioLoadToLog :: proc(using out: ^OutLog, filename: string) {
-    fmt.sbprintf(&logBuilder, "Loaded audio data from '%s'\n", filename)
+    writeToLog(out, fmt.tprintf("Loaded audio data from '%s'", filename))
     loads += 1
 }
 
 writeFileLoadToLog :: proc(using out: ^OutLog, filename: string) {
-    fmt.sbprintf(&logBuilder, "Loaded file data from '%s'\n", filename)
+    writeToLog(out, fmt.tprintf("Loaded file data from '%s'", filename))
     loads += 1
 }
 
 writeAllocToLog :: proc(using out: ^OutLog, varname: string) {
-    fmt.sbprintf(&logBuilder, "Alloc'd memory to variable '%s'\n", varname)
+    writeToLog(out, fmt.tprintf("Alloc'd memory to variable '%s'", varname))
     loads += 1
 }
 
 writeDataFreeToLog :: proc(using out: ^OutLog, filename: string) {
-    fmt.sbprintf(&logBuilder, "Freed data from '%s'\n", filename)
+    writeToLog(out, fmt.tprintf("Freed data from '%s'", filename))
     frees += 1
 }
 
 writeAllocFreeToLog :: proc(using out: ^OutLog, varname: string) {
-    fmt.sbprintf(&logBuilder, "Freed memory from variable '%s'\n", varname)
+    writeToLog(out, fmt.tprintf("Freed memory from variable '%s'", varname))
     frees += 1
 }
 
