@@ -10,12 +10,14 @@ SpriteAnimation :: struct {
     // Describes how many frames should be read from the spritesheet from a specific row until the row is pushed downwards.
     // If framePeriod == frames, then all frames of a sprite exist on the same spritesheet row
     framePeriod: int,
+    // Describes how long the last frame lingers for. Set to -1.0 for forever
+    linger: f32,
     tag: string
 }
 
-init_SpriteAnimation :: proc(animationSourceOffset: rl.Vector2, frames: int, framePeriod: int, tag: string) -> SpriteAnimation {
+init_SpriteAnimation :: proc(animationSourceOffset: rl.Vector2, frames: int, framePeriod: int, linger: f32, tag: string) -> SpriteAnimation {
     return {
-        animationSourceOffset, frames, framePeriod, tag
+        animationSourceOffset, frames, framePeriod, linger, tag
     }
 }
 
@@ -42,11 +44,17 @@ free_SpriteAnimationController :: proc(using controller: ^SpriteAnimationControl
 
 addAnimationToSpriteController :: proc(
     using controller: ^SpriteAnimationController, 
-    animationSourceOffset: rl.Vector2, frames: int, framePeriod: int,
+    animationSourceOffset: rl.Vector2, frames: int, framePeriod: int, linger: f32,
     tag: string
 ) {
-    animations[tag] = init_SpriteAnimation(animationSourceOffset, frames, framePeriod, tag)
+    animations[tag] = init_SpriteAnimation(animationSourceOffset, frames, framePeriod, linger, tag)
     currentAnimation = &animations[tag]
+}
+
+ChangeSpriteAnimation :: proc(using controller: ^SpriteAnimationController, tag: string) {
+    currentAnimation = &animations[tag]
+    curFrame = 0
+    curTime = 0.0
 }
 
 SpriteAnimationUpdate :: proc(using controller: ^SpriteAnimationController, dt: f32, log: ^OutLog) {
@@ -56,6 +64,19 @@ SpriteAnimationUpdate :: proc(using controller: ^SpriteAnimationController, dt: 
     }
 
     curTime += dt
+
+    if curFrame == currentAnimation.frames - 1 {
+        if currentAnimation.linger < 0.0 {
+            return
+        } else if currentAnimation.linger > 0.0 {
+            if curTime >= currentAnimation.linger {
+                curFrame = 0
+                curTime = 0.0
+            }
+
+            return
+        }
+    }
 
     if curTime >= 1.0 / auto_cast fps {
         curTime = 0.0

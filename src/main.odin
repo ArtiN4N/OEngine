@@ -36,8 +36,8 @@ main :: proc() {
     attachSpriteAnimationController(&frogSprite, 2, &log)
     defer free_SpriteAnimationController(&frogSprite.animationController, &log)
     
-    addAnimationToSpriteController(&frogSprite.animationController, rl.Vector2{0, 0}, 2, 2, "upper")
-    addAnimationToSpriteController(&frogSprite.animationController, rl.Vector2{0, 448}, 2, 2, "lower")
+    addAnimationToSpriteController(&frogSprite.animationController, rl.Vector2{0, 0}, 2, 2, 2.0, "upper")
+    addAnimationToSpriteController(&frogSprite.animationController, rl.Vector2{0, 448}, 2, 2, -1.0, "lower")
 
     // -------------------------------------------
 
@@ -51,8 +51,8 @@ main :: proc() {
 
         timer += dt
 
-        if timer >= 2.0 {
-            frogSprite.animationController.currentAnimation = &frogSprite.animationController.animations["upper"]
+        if timer < 2.0 && timer + dt > 2.0 {
+            ChangeSpriteAnimation(&frogSprite.animationController, "upper")
         }
 
         SpriteAnimationUpdate(&frogSprite.animationController, dt, &log)
