@@ -49,8 +49,9 @@ addAnimationToSpriteController :: proc(
     currentAnimation = &animations[tag]
 }
 
-SpriteAnimationUpdate :: proc(using controller: ^SpriteAnimationController, dt: f32) {
+SpriteAnimationUpdate :: proc(using controller: ^SpriteAnimationController, dt: f32, log: ^OutLog) {
     if currentAnimation == nil {
+        writeToLog(log, "ERROR - tried to update a sprite without an animation\n")
         return
     }
 
