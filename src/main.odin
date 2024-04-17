@@ -51,7 +51,7 @@ main :: proc() {
             frogSprite.animationController.currentAnimation = &frogSprite.animationController.animations["upper"]
         }
 
-        SpriteAnimationUpdate(&frogSprite.animationController, dt)
+        SpriteAnimationUpdate(&frogSprite.animationController, dt, &log)
         draw(frogSprite)
     }
 }
