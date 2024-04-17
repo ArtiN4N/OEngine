@@ -7,7 +7,7 @@
     - [ ] inline comments
     - [ ] api style documentation
 - [x] debug log to output file
-- [x] sprite drawing
+- [ ] sprite drawing
     - [x] sprite animation
     - [x] spritesheet implementation
     - [ ] automatic animation data creation from spritesheet
