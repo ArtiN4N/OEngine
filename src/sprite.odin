@@ -10,21 +10,19 @@ SpriteAnimation :: struct {
     // Describes how many frames should be read from the spritesheet from a specific row until the row is pushed downwards.
     // If framePeriod == frames, then all frames of a sprite exist on the same spritesheet row
     framePeriod: int,
+    tag: string
 }
 
-init_SpriteAnimation :: proc(animationSourceOffset: rl.Vector2, frames: int, framePeriod: int) -> SpriteAnimation {
+init_SpriteAnimation :: proc(animationSourceOffset: rl.Vector2, frames: int, framePeriod: int, tag: string) -> SpriteAnimation {
     return {
-        animationSourceOffset, frames, framePeriod
+        animationSourceOffset, frames, framePeriod, tag
     }
 }
 
 SpriteAnimationController :: struct {
-    animations: [dynamic]SpriteAnimation,
+    animations: map[string]SpriteAnimation,
     currentAnimation: ^SpriteAnimation,
 
-    numAnims: int,
-    curAnimNum: int,
-    
     fps: int,
     curFrame: int,
     curTime: f32,
@@ -32,20 +30,23 @@ SpriteAnimationController :: struct {
 
 init_SpriteAnimationController :: proc(fps: int) -> SpriteAnimationController {
     return {
-        {}, nil,
-        0, -1, 
+        make(map[string]SpriteAnimation), nil,
         fps, 0, 0.0
     }
 }
 
+free_SpriteAnimationController :: proc(using controller: ^SpriteAnimationController, log: ^OutLog) {
+    writeAllocFreeToLog(log, "SpriteAnimationController.animations")
+    delete(animations)
+}
+
 addAnimationToSpriteController :: proc(
     using controller: ^SpriteAnimationController, 
-    animationSourceOffset: rl.Vector2, frames: int, framePeriod: int
+    animationSourceOffset: rl.Vector2, frames: int, framePeriod: int,
+    tag: string
 ) {
-    append(&animations, init_SpriteAnimation(animationSourceOffset, frames, framePeriod))
-    curAnimNum = numAnims
-    currentAnimation = &animations[curAnimNum]
-    numAnims += 1  
+    animations[tag] = init_SpriteAnimation(animationSourceOffset, frames, framePeriod, tag)
+    currentAnimation = &animations[tag]
 }
 
 SpriteAnimationUpdate :: proc(using controller: ^SpriteAnimationController, dt: f32) {
@@ -91,9 +92,10 @@ init_Sprite :: proc(
     }
 }
 
-attachSpriteAnimationController :: proc(using sprite: ^Sprite, fps: int) {
+attachSpriteAnimationController :: proc(using sprite: ^Sprite, fps: int, log: ^OutLog) {
     animated = true;
     animationController = init_SpriteAnimationController(fps)
+    writeAllocToLog(log, "SpriteAnimationController.animations")
 }
 
 getFrameSourcePosition :: proc(using sprite: Sprite) -> (f32, f32) {
