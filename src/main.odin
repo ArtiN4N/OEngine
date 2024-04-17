@@ -30,16 +30,27 @@ main :: proc() {
     loadSpriteTexture(&frogSprite, "resources/frog.png", &log)
     defer freeSpriteTexture(&frogSprite, "resources/frog.png", &log)
 
-    attachSpriteAnimationController(&frogSprite, 2)
-    addAnimationToSpriteController(&frogSprite.animationController, rl.Vector2{0, 0}, 2, 2)
-    addAnimationToSpriteController(&frogSprite.animationController, rl.Vector2{0, 448}, 2, 2)
+    attachSpriteAnimationController(&frogSprite, 2, &log)
+    defer free_SpriteAnimationController(&frogSprite.animationController, &log)
+    
+    addAnimationToSpriteController(&frogSprite.animationController, rl.Vector2{0, 0}, 2, 2, "upper")
+    addAnimationToSpriteController(&frogSprite.animationController, rl.Vector2{0, 448}, 2, 2, "lower")
 
     // -------------------------------------------
 
     rl.SetTargetFPS(60)
 
+    timer: f32 = 0.0
+
     for !rl.WindowShouldClose() {
         dt := rl.GetFrameTime()
+
+        timer += dt
+
+        if timer >= 2.0 {
+            frogSprite.animationController.currentAnimation = &frogSprite.animationController.animations["upper"]
+        }
+
         SpriteAnimationUpdate(&frogSprite.animationController, dt)
         draw(frogSprite)
     }
