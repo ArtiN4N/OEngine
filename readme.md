@@ -3,6 +3,9 @@
 ## TODO LIST
 
 - [] master struct to control state
+- [] documentation
+ - [] inline comments
+ - [] api style documentation
 - [x] debug log to output file
 - [x] sprite drawing
  - [x] sprite animation
