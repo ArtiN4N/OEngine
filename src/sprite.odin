@@ -4,15 +4,72 @@ import "core:strings"
 
 import rl "vendor:raylib"
 
-Sprite :: struct {
-    animated: bool,
-
+SpriteAnimation :: struct {
+    animationSourceOffset: rl.Vector2,
     frames: int,
-    curFrame: int,
     // Describes how many frames should be read from the spritesheet from a specific row until the row is pushed downwards.
     // If framePeriod == frames, then all frames of a sprite exist on the same spritesheet row
     framePeriod: int,
-    frameSize: rl.Vector2,
+}
+
+init_SpriteAnimation :: proc(animationSourceOffset: rl.Vector2, frames: int, framePeriod: int) -> SpriteAnimation {
+    return {
+        animationSourceOffset, frames, framePeriod
+    }
+}
+
+SpriteAnimationController :: struct {
+    animations: [dynamic]SpriteAnimation,
+    currentAnimation: ^SpriteAnimation,
+
+    numAnims: int,
+    curAnimNum: int,
+    
+    fps: int,
+    curFrame: int,
+    curTime: f32,
+}
+
+init_SpriteAnimationController :: proc(fps: int) -> SpriteAnimationController {
+    return {
+        {}, nil,
+        0, -1, 
+        fps, 0, 0.0
+    }
+}
+
+addAnimationToSpriteController :: proc(
+    using controller: ^SpriteAnimationController, 
+    animationSourceOffset: rl.Vector2, frames: int, framePeriod: int
+) {
+    append(&animations, init_SpriteAnimation(animationSourceOffset, frames, framePeriod))
+    curAnimNum = numAnims
+    currentAnimation = &animations[curAnimNum]
+    numAnims += 1  
+}
+
+SpriteAnimationUpdate :: proc(using controller: ^SpriteAnimationController, dt: f32) {
+    if currentAnimation == nil {
+        return
+    }
+
+    curTime += dt
+
+    if curTime >= 1.0 / auto_cast fps {
+        curTime = 0.0
+        curFrame += 1
+
+        if curFrame >= currentAnimation.frames {
+            curFrame = 0
+        }
+    }
+}
+
+Sprite :: struct {
+    animated: bool,
+    animationController: SpriteAnimationController,
+
+    spriteSize: rl.Vector2,
 
     texture: rl.Texture2D,
     textureSourceOffset: rl.Vector2,
@@ -22,23 +79,43 @@ Sprite :: struct {
 }
 
 init_Sprite :: proc(
-    animated: bool, 
-    frames, framePeriod: int, frameSize: rl.Vector2,
+    spriteSize: rl.Vector2,
     texture: rl.Texture2D, textureSourceOffset: rl.Vector2, textureDestOffset: rl.Vector2
 ) -> Sprite {
     return {
-        animated,
-        frames, 0, framePeriod, frameSize,
+        false, init_SpriteAnimationController(0),
+        spriteSize,
         texture, textureSourceOffset, textureDestOffset,
         
         false,
     }
 }
 
+attachSpriteAnimationController :: proc(using sprite: ^Sprite, fps: int) {
+    animated = true;
+    animationController = init_SpriteAnimationController(fps)
+}
+
+getFrameSourcePosition :: proc(using sprite: Sprite) -> (f32, f32) {
+    x := textureSourceOffset.x
+    y := textureSourceOffset.y
+    
+    if animated && animationController.currentAnimation != nil {
+        x += animationController.currentAnimation.animationSourceOffset.x
+        y += animationController.currentAnimation.animationSourceOffset.y
+
+        x += spriteSize.x * auto_cast (animationController.curFrame % animationController.currentAnimation.framePeriod)
+        y += spriteSize.y * auto_cast (animationController.curFrame / animationController.currentAnimation.framePeriod)
+    }
+
+    return x, y
+}
+
 getSpriteSourceRec :: proc(using sprite: Sprite) -> rl.Rectangle {
+    x, y := getFrameSourcePosition(sprite)
     return rl.Rectangle{
-        textureSourceOffset.x + frameSize.x * auto_cast (curFrame % framePeriod), textureSourceOffset.y + frameSize.y * auto_cast (curFrame / framePeriod), 
-        frameSize.x, frameSize.y,
+        x, y,
+        spriteSize.x, spriteSize.y,
     }
 }
 
