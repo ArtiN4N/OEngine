@@ -19,21 +19,12 @@ main :: proc() {
     // TEXTURES ----------------------------------
 
     // Creates a null texture to be auto assigned to all sprites
-    exceptionTexture := rl.LoadTexture("resources/exception.png")
-    writeTextureLoadToLog(&state.outLog, "resources/exception.png", rl.IsTextureReady(exceptionTexture))
+    loadTextureToState(&state, "resources/exception.png", "exception")
 
-    defer {
-        if rl.IsTextureReady(exceptionTexture) {
-            rl.UnloadTexture(exceptionTexture)
-            writeDataFreeToLog(&state.outLog, "resources/exception.png")
-        }
-    }
+    loadTextureToState(&state, "resources/frogsheet.png", "frogsheet")
 
     // TODO: Change sprite to use texture pointer instead, since we dont want to be making copies of textures
-    frogSprite := init_Sprite(rl.Vector2{16, 16}, exceptionTexture, rl.Vector2{0, 0}, rl.Vector2{0, 0})
-    
-    loadSpriteTexture(&frogSprite, "resources/frogsheet.png", &state.outLog)
-    defer freeSpriteTexture(&frogSprite, "resources/frogsheet.png", &state.outLog)
+    frogSprite := init_Sprite(rl.Vector2{16, 16}, &state.masterSprites["frogsheet"], rl.Vector2{0, 0}, rl.Vector2{0, 0})
 
     attachSpriteAnimationController(&frogSprite, &state.outLog)
     defer free_SpriteAnimationController(&frogSprite.animationController, &state.outLog)
