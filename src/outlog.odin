@@ -22,7 +22,7 @@ init_OutLog :: proc() -> OutLog {
 
     fmt.sbprintf(
         &builder, 
-        "----------INIT FRAME----------\nExecuted at time %4d:%2d:%2d - %2d:%2d:%2d\n------------------------------\n\n", 
+        "----------INIT FRAME----------\nExecuted at time %4d:%2d:%2d - %2d:%2d:%2d\n\n", 
         time.date(curTime), (hour - 7) % 24, min, sec
     )
 
@@ -44,22 +44,22 @@ writeToLog :: proc(using out: ^OutLog, data: string) {
     fmt.sbprintf(&logBuilder, "%s -> logged at time %.2f\n", data, timeElapsed)
 }
 
-writeTextureLoadToLog :: proc(using out: ^OutLog, filename: string, success: bool) {
+writeTextureLoadToLog :: proc(using out: ^OutLog, tag: string, success: bool) {
     if !success {
-        writeToLog(out, fmt.tprintf("ERROR - Failed to load texture data from '%s'", filename))
+        writeToLog(out, fmt.tprintf("ERROR - Failed to load texture data from '%s'", tag))
         return
     }
-    writeToLog(out, fmt.tprintf("Loaded texture data from '%s'", filename))
+    writeToLog(out, fmt.tprintf("Loaded texture data from tag '%s'", tag))
     loads += 1
 }
 
-writeAudioLoadToLog :: proc(using out: ^OutLog, filename: string) {
-    writeToLog(out, fmt.tprintf("Loaded audio data from '%s'", filename))
+writeAudioLoadToLog :: proc(using out: ^OutLog, tag: string) {
+    writeToLog(out, fmt.tprintf("Loaded audio data from tag '%s'", tag))
     loads += 1
 }
 
-writeFileLoadToLog :: proc(using out: ^OutLog, filename: string) {
-    writeToLog(out, fmt.tprintf("Loaded file data from '%s'", filename))
+writeFileLoadToLog :: proc(using out: ^OutLog, tag: string) {
+    writeToLog(out, fmt.tprintf("Loaded file data from tag '%s'", tag))
     loads += 1
 }
 
@@ -68,8 +68,8 @@ writeAllocToLog :: proc(using out: ^OutLog, varname: string) {
     loads += 1
 }
 
-writeDataFreeToLog :: proc(using out: ^OutLog, filename: string) {
-    writeToLog(out, fmt.tprintf("Freed data from '%s'", filename))
+writeDataFreeToLog :: proc(using out: ^OutLog, tag: string) {
+    writeToLog(out, fmt.tprintf("Freed data from tag '%s'", tag))
     frees += 1
 }
 
@@ -78,10 +78,14 @@ writeAllocFreeToLog :: proc(using out: ^OutLog, varname: string) {
     frees += 1
 }
 
+writeUnloadFrameHeader :: proc(using out: ^OutLog) {
+    fmt.sbprintf(&logBuilder, "\n----------UNLOAD FRAME----------\n")
+}
+
 writeLogToFile :: proc(using out: ^OutLog) {
     fmt.sbprintf(
         &logBuilder, 
-        "\n----------EXIT FRAME----------\nTOTAL LOADS: %3d\nTOTAL FREES: %3d\nLOADS == FREES: %t\n------------------------------", 
+        "\n----------EXIT FRAME----------\nTOTAL LOADS: %3d\nTOTAL FREES: %3d\nLOADS == FREES: %t", 
         loads, frees, loads == frees
     )
 
