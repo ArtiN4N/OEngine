@@ -4,7 +4,7 @@
 
 - [ ] master struct to control state
 - [ ] documentation
-    - [ ] inline comments
+    - [x] inline comments
     - [ ] api style documentation
 - [x] debug log to output file
 - [ ] events
