@@ -120,23 +120,19 @@ Sprite :: struct {
 
     spriteSize: rl.Vector2,
 
-    texture: rl.Texture2D,
+    texture: ^rl.Texture2D,
     textureSourceOffset: rl.Vector2,
-    textureDestOffset: rl.Vector2,
-
-    textureLoaded: bool,
+    textureDestOffset: rl.Vector2
 }
 
 init_Sprite :: proc(
     spriteSize: rl.Vector2,
-    texture: rl.Texture2D, textureSourceOffset: rl.Vector2, textureDestOffset: rl.Vector2
+    texture: ^rl.Texture2D, textureSourceOffset: rl.Vector2, textureDestOffset: rl.Vector2
 ) -> Sprite {
     return {
         false, init_SpriteAnimationController(),
         spriteSize,
         texture, textureSourceOffset, textureDestOffset,
-        
-        false,
     }
 }
 
@@ -180,33 +176,12 @@ getSpriteSourceRec :: proc(using sprite: Sprite) -> rl.Rectangle {
 
 drawSprite :: proc(using sprite: Sprite, rotation: f32) {
     rl.DrawTexturePro(
-        texture,
+        texture^,
         getSpriteSourceRec(sprite), 
         rl.Rectangle{100, 100, 256, 256}, 
         textureDestOffset,
         rotation,
         rl.RAYWHITE
     )
-}
-//-----------------------------------------------------------------------------------------------
-
-
-
-// Sprite management functions
-//-----------------------------------------------------------------------------------------------
-loadSpriteTexture :: proc(using sprite: ^Sprite, filename: string, log: ^OutLog) {
-    texture = rl.LoadTexture(strings.clone_to_cstring(filename))
-    textureLoaded = rl.IsTextureReady(texture)
-    writeTextureLoadToLog(log, filename, textureLoaded)
-}
-
-freeSpriteTexture :: proc(using sprite: ^Sprite, filename: string, log: ^OutLog) {
-    if !textureLoaded {
-        writeToLog(log, "ERROR - Tried to free sprite that was never loaded!\n")
-        return
-    }
-
-    rl.UnloadTexture(texture)
-    writeDataFreeToLog(log, filename)
 }
 //-----------------------------------------------------------------------------------------------
