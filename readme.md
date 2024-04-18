@@ -8,7 +8,10 @@
     - [ ] api style documentation
 - [x] debug log to output file
 - [ ] events
-    - [ ] event handling
+    - [ ] music events
+        - [ ] dynamic pitch/speed change
+        - [ ] transition into another track
+    - [ ] map events
 - [ ] sprites
     - [x] sprite drawing
     - [x] sprite animation
@@ -18,6 +21,10 @@
 - [ ] audio
     - [ ] background music
     - [ ] sound fx
+    - [ ] locational audio
+    - [ ] audio effects
+        - [ ] lpf
+        - [ ] delay
 - [ ] maps
     - [ ] loading from map file
         - [ ] decide on format
