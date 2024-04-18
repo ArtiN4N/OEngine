@@ -12,6 +12,11 @@
         - [ ] dynamic pitch/speed change
         - [ ] transition into another track
     - [ ] map events
+- [ ] input handling
+    - [ ] movement input
+    - [ ] input with cooldown
+    - [ ] shortcuts and combination keys
+    - [ ] receive typed text
 - [ ] sprites
     - [x] sprite drawing
     - [x] sprite animation
