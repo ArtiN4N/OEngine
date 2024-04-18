@@ -8,33 +8,35 @@ import rl "vendor:raylib"
 main :: proc() {
 
     // Initializing outlog struct to log debug information
-    log := init_OutLog()
-    defer writeLogToFile(&log)
+    state := init_State()
+    defer cleanUpState(&state)
 
-    rl.InitWindow(400, 400, "OEdit")
+    rl.InitWindow(1, 1, "")
     defer rl.CloseWindow()
+
+    setStateWindow(&state, 400, 400, "OEngine Test")
 
     // TEXTURES ----------------------------------
 
     // Creates a null texture to be auto assigned to all sprites
     exceptionTexture := rl.LoadTexture("resources/exception.png")
-    writeTextureLoadToLog(&log, "resources/exception.png", rl.IsTextureReady(exceptionTexture))
+    writeTextureLoadToLog(&state.outLog, "resources/exception.png", rl.IsTextureReady(exceptionTexture))
 
     defer {
         if rl.IsTextureReady(exceptionTexture) {
             rl.UnloadTexture(exceptionTexture)
-            writeDataFreeToLog(&log, "resources/exception.png")
+            writeDataFreeToLog(&state.outLog, "resources/exception.png")
         }
     }
 
     // TODO: Change sprite to use texture pointer instead, since we dont want to be making copies of textures
     frogSprite := init_Sprite(rl.Vector2{16, 16}, exceptionTexture, rl.Vector2{0, 0}, rl.Vector2{0, 0})
     
-    loadSpriteTexture(&frogSprite, "resources/frogsheet.png", &log)
-    defer freeSpriteTexture(&frogSprite, "resources/frogsheet.png", &log)
+    loadSpriteTexture(&frogSprite, "resources/frogsheet.png", &state.outLog)
+    defer freeSpriteTexture(&frogSprite, "resources/frogsheet.png", &state.outLog)
 
-    attachSpriteAnimationController(&frogSprite, &log)
-    defer free_SpriteAnimationController(&frogSprite.animationController, &log)
+    attachSpriteAnimationController(&frogSprite, &state.outLog)
+    defer free_SpriteAnimationController(&frogSprite.animationController, &state.outLog)
     
     addAnimationToSpriteController(&frogSprite.animationController, rl.Vector2{0, 0}, 2, 5, 2, 3.0, "idle")
     addAnimationToSpriteController(&frogSprite.animationController, rl.Vector2{32, 0}, 3, 3, 3, 0.0, "smoke")
@@ -49,24 +51,24 @@ main :: proc() {
     timer: f32 = 0.0
 
     for !rl.WindowShouldClose() {
-        dt := rl.GetFrameTime()
-        stepOutLog(&log, dt)
+        setStateDT(&state)
+        stepOutLog(&state.outLog, state.dt)
 
-        timer += dt
+        timer += state.dt
 
-        if timer < 5.0 && timer + dt > 5.0 {
+        if timer < 5.0 && timer + state.dt > 5.0 {
             ChangeSpriteAnimation(&frogSprite.animationController, "smoke")
         }
 
-        if timer < 10.0 && timer + dt > 10.0 {
+        if timer < 10.0 && timer + state.dt > 10.0 {
             ChangeSpriteAnimation(&frogSprite.animationController, "jump")
         }
 
-        if timer < 12.0 && timer + dt > 12.0 {
+        if timer < 12.0 && timer + state.dt > 12.0 {
             ChangeSpriteAnimation(&frogSprite.animationController, "idle")
         }
 
-        SpriteAnimationUpdate(&frogSprite.animationController, dt, &log)
+        SpriteAnimationUpdate(&frogSprite.animationController, state.dt, &state.outLog)
         draw(frogSprite)
     }
 }
