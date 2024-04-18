@@ -4,24 +4,35 @@ import "core:strings"
 
 import rl "vendor:raylib"
 
+
+// Sprite animation struct and init function
+//-----------------------------------------------------------------------------------------------
 SpriteAnimation :: struct {
+    // Where the first frame of the current animation is located in its parent's spritesheet
     animationSourceOffset: rl.Vector2,
     frames: int,
     fps: int,
     // Describes how many frames should be read from the spritesheet from a specific row until the row is pushed downwards.
     // If framePeriod == frames, then all frames of a sprite exist on the same spritesheet row
     framePeriod: int,
-    // Describes how long the last frame lingers for. Set to -1.0 for forever
+    // Describes how long the last frame lingers for. Set to -1.0 for forever.
     linger: f32,
+    // Identifying tag used to set current animation
     tag: string
 }
 
+// Function to create sprite animations
 init_SpriteAnimation :: proc(animationSourceOffset: rl.Vector2, frames: int, fps, framePeriod: int, linger: f32, tag: string) -> SpriteAnimation {
     return {
         animationSourceOffset, frames, fps, framePeriod, linger, tag
     }
 }
+//-----------------------------------------------------------------------------------------------
 
+
+
+// Animation controller functions
+//-----------------------------------------------------------------------------------------------
 SpriteAnimationController :: struct {
     animations: map[string]SpriteAnimation,
     currentAnimation: ^SpriteAnimation,
@@ -50,7 +61,12 @@ addAnimationToSpriteController :: proc(
     animations[tag] = init_SpriteAnimation(animationSourceOffset, frames, fps, framePeriod, linger, tag)
     currentAnimation = &animations[tag]
 }
+//-----------------------------------------------------------------------------------------------
 
+
+
+// Animation controller update functions
+//-----------------------------------------------------------------------------------------------
 ChangeSpriteAnimation :: proc(using controller: ^SpriteAnimationController, tag: string) {
     currentAnimation = &animations[tag]
     curFrame = 0
@@ -87,7 +103,12 @@ SpriteAnimationUpdate :: proc(using controller: ^SpriteAnimationController, dt: 
         }
     }
 }
+//-----------------------------------------------------------------------------------------------
 
+
+
+// Sprite init functions
+//-----------------------------------------------------------------------------------------------
 Sprite :: struct {
     animated: bool,
     animationController: SpriteAnimationController,
@@ -119,7 +140,12 @@ attachSpriteAnimationController :: proc(using sprite: ^Sprite, log: ^OutLog) {
     animationController = init_SpriteAnimationController()
     writeAllocToLog(log, "SpriteAnimationController.animations")
 }
+//-----------------------------------------------------------------------------------------------
 
+
+
+// Sprite drawing and util functions
+//-----------------------------------------------------------------------------------------------
 getFrameSourcePosition :: proc(using sprite: Sprite) -> (f32, f32) {
     x := textureSourceOffset.x
     y := textureSourceOffset.y
@@ -127,7 +153,7 @@ getFrameSourcePosition :: proc(using sprite: Sprite) -> (f32, f32) {
     if animated && animationController.currentAnimation != nil {
         x += animationController.currentAnimation.animationSourceOffset.x
         y += animationController.currentAnimation.animationSourceOffset.y
-
+        
         x += spriteSize.x * auto_cast (animationController.curFrame % animationController.currentAnimation.framePeriod)
         y += spriteSize.y * auto_cast (animationController.curFrame / animationController.currentAnimation.framePeriod)
     }
@@ -153,7 +179,12 @@ drawSprite :: proc(using sprite: Sprite, rotation: f32) {
         rl.RAYWHITE
     )
 }
+//-----------------------------------------------------------------------------------------------
 
+
+
+// Sprite management functions
+//-----------------------------------------------------------------------------------------------
 loadSpriteTexture :: proc(using sprite: ^Sprite, filename: string, log: ^OutLog) {
     texture = rl.LoadTexture(strings.clone_to_cstring(filename))
     textureLoaded = rl.IsTextureReady(texture)
@@ -169,3 +200,4 @@ freeSpriteTexture :: proc(using sprite: ^Sprite, filename: string, log: ^OutLog)
     rl.UnloadTexture(texture)
     writeDataFreeToLog(log, filename)
 }
+//-----------------------------------------------------------------------------------------------
