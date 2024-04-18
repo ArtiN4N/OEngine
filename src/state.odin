@@ -10,19 +10,41 @@ State :: struct {
 
     dt: f32,
 
-    masterSprites: map[string]rl.Texture2D,   
+    masterSprites: map[string]rl.Texture2D,
+
+    testSprite: Sprite,
 }
 
 init_State :: proc() -> State {
     return {
         init_OutLog(), rl.Vector2{0, 0},
         0.0,
-        make(map[string]rl.Texture2D)
+        make(map[string]rl.Texture2D),
+        init_Sprite(rl.Vector2{0, 0}, nil, rl.Vector2{0, 0}, rl.Vector2{0, 0})
     }
+}
+
+setUpState :: proc(using state: ^State) {
+    loadTextureToState(state, "resources/exception.png", "exception")
+    loadTextureToState(state, "resources/frogsheet.png", "frogsheet")
+
+    // testing sprite --
+    testSprite = init_Sprite(rl.Vector2{16, 16}, &masterSprites["frogsheet"], rl.Vector2{0, 0}, rl.Vector2{0, 0})
+
+    attachSpriteAnimationController(&frogSprite, &state.outLog)
+
+    addAnimationToSpriteController(&frogSprite.animationController, rl.Vector2{0, 0}, 2, 5, 2, 3.0, "idle")
+    addAnimationToSpriteController(&frogSprite.animationController, rl.Vector2{32, 0}, 3, 3, 3, 0.0, "smoke")
+    addAnimationToSpriteController(&frogSprite.animationController, rl.Vector2{0, 16}, 5, 5, 5, -1.0, "jump")
+
+    ChangeSpriteAnimation(&frogSprite.animationController, "idle")
+    // -----------------
 }
 
 cleanUpState :: proc(using state: ^State) {
     writeFrameHeader(&outLog, "UNLOAD")
+
+    free_SpriteAnimationController(&frogSprite.animationController, &state.outLog)
     
     for tag, texture in masterSprites {
         writeDataFreeToLog(&outLog, tag)
