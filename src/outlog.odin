@@ -22,7 +22,7 @@ init_OutLog :: proc() -> OutLog {
 
     fmt.sbprintf(
         &builder, 
-        "----------INIT FRAME----------\nExecuted at time %4d:%2d:%2d - %2d:%2d:%2d\n\n", 
+        "----------INIT FRAME----------\nExecuted at time %4d:%2d:%2d - %2d:%2d:%2d\n", 
         time.date(curTime), (hour - 7) % 24, min, sec
     )
 
@@ -78,8 +78,8 @@ writeAllocFreeToLog :: proc(using out: ^OutLog, varname: string) {
     frees += 1
 }
 
-writeUnloadFrameHeader :: proc(using out: ^OutLog) {
-    fmt.sbprintf(&logBuilder, "\n----------UNLOAD FRAME----------\n")
+writeFrameHeader :: proc(using out: ^OutLog, title: string) {
+    fmt.sbprintf(&logBuilder, "\n----------%s FRAME----------\n", title)
 }
 
 writeLogToFile :: proc(using out: ^OutLog) {
