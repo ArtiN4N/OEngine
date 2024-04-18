@@ -81,9 +81,13 @@ SpriteAnimationUpdate :: proc(using controller: ^SpriteAnimationController, dt: 
 
     curTime += dt
 
+    // If we're on the last frame, override the frame per second calculation in favor of a linger frame
+    // Each animation has a linger value that specifies how long the last frame will linger for.
     if curFrame == currentAnimation.frames - 1 {
+        // A value of -1.0 (less than 0) will cause the last frame to linger forever
         if currentAnimation.linger < 0.0 {
             return
+        // Otherwise, count down until the linger is over, and reset the animtion
         } else if currentAnimation.linger > 0.0 {
             if curTime >= currentAnimation.linger {
                 curFrame = 0
@@ -94,6 +98,7 @@ SpriteAnimationUpdate :: proc(using controller: ^SpriteAnimationController, dt: 
         }
     }
 
+    // one over frames per second is seconds per frame, which we use to count to when a frame should be updated
     if curTime >= 1.0 / auto_cast currentAnimation.fps {
         curTime = 0.0
         curFrame += 1
@@ -147,9 +152,13 @@ attachSpriteAnimationController :: proc(using sprite: ^Sprite, log: ^OutLog) {
 // Sprite drawing and util functions
 //-----------------------------------------------------------------------------------------------
 getFrameSourcePosition :: proc(using sprite: Sprite) -> (f32, f32) {
+    // The source position is where in the parent's sprite sheet the current frame to draw resides
     x := textureSourceOffset.x
     y := textureSourceOffset.y
     
+    // If the frame in question is apart of an animation, the source frame gets pushed to the right for every frame.
+    // After a number of frames specified by the animation's frame period, the source position is snapped back to the
+    // left, and pushed down.
     if animated && animationController.currentAnimation != nil {
         x += animationController.currentAnimation.animationSourceOffset.x
         y += animationController.currentAnimation.animationSourceOffset.y
