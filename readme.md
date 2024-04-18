@@ -2,7 +2,7 @@
 ---
 ## TODO LIST
 
-- [ ] master struct to control state
+- [x] master struct to control state
 - [ ] documentation
     - [x] inline comments
     - [ ] api style documentation
