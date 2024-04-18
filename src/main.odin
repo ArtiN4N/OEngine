@@ -14,6 +14,8 @@ main :: proc() {
     rl.InitWindow(1, 1, "")
     defer rl.CloseWindow()
 
+    writeFrameHeader(&state.outLog, "LOAD")
+
     setStateWindow(&state, 400, 400, "OEngine Test")
 
     // TEXTURES ----------------------------------
@@ -36,6 +38,8 @@ main :: proc() {
     ChangeSpriteAnimation(&frogSprite.animationController, "idle")
 
     // -------------------------------------------
+
+    writeFrameHeader(&state.outLog, "GAME")
 
     rl.SetTargetFPS(60)
 

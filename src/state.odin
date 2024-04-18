@@ -22,7 +22,7 @@ init_State :: proc() -> State {
 }
 
 cleanUpState :: proc(using state: ^State) {
-    writeUnloadFrameHeader(&outLog)
+    writeFrameHeader(&outLog, "UNLOAD")
     
     for tag, texture in masterSprites {
         writeDataFreeToLog(&outLog, tag)
