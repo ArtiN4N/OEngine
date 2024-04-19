@@ -10,10 +10,11 @@ main :: proc() {
     rl.InitWindow(1, 1, "")
     defer rl.CloseWindow()
 
+    state := init_State()
+
     writeFrameHeader(&state.outLog, "LOAD")
     setStateWindow(&state, 400, 400, "OEngine Test")
 
-    state := init_State()
     setUpState(&state)
     defer cleanUpState(&state)
 
@@ -42,17 +43,17 @@ main :: proc() {
         }
 
         SpriteAnimationUpdate(&state.testSprite.animationController, state.dt, &state.outLog)
-        draw(frogSprite)
+        draw(state)
     }
 }
 
-draw :: proc(frogSprite: Sprite) {
+draw :: proc(state: State) {
     rl.BeginDrawing()
     defer rl.EndDrawing()
 
     rl.ClearBackground(rl.RAYWHITE)
     
-    drawSprite(frogSprite, 0)
+    drawSprite(state.testSprite, 0)
 
     rl.DrawFPS(10, 10)
 }
