@@ -6,6 +6,8 @@ import rl "vendor:raylib"
 
 State :: struct {
     outLog: OutLog,
+    audioHandler: AudioHandler,
+
     windowSize: rl.Vector2,
 
     dt: f32,
@@ -17,7 +19,8 @@ State :: struct {
 
 init_State :: proc() -> State {
     return {
-        init_OutLog(), rl.Vector2{0, 0},
+        init_OutLog(), init_AudioHandler(),
+        rl.Vector2{0, 0},
         0.0,
         make(map[string]rl.Texture2D),
         init_Sprite(rl.Vector2{0, 0}, nil, rl.Vector2{0, 0}, rl.Vector2{0, 0})
@@ -31,25 +34,29 @@ setUpState :: proc(using state: ^State) {
     // testing sprite --
     testSprite = init_Sprite(rl.Vector2{16, 16}, &masterSprites["frogsheet"], rl.Vector2{0, 0}, rl.Vector2{0, 0})
 
-    attachSpriteAnimationController(&frogSprite, &state.outLog)
+    attachSpriteAnimationController(&testSprite, &state.outLog)
 
-    addAnimationToSpriteController(&frogSprite.animationController, rl.Vector2{0, 0}, 2, 5, 2, 3.0, "idle")
-    addAnimationToSpriteController(&frogSprite.animationController, rl.Vector2{32, 0}, 3, 3, 3, 0.0, "smoke")
-    addAnimationToSpriteController(&frogSprite.animationController, rl.Vector2{0, 16}, 5, 5, 5, -1.0, "jump")
+    addAnimationToSpriteController(&testSprite.animationController, rl.Vector2{0, 0}, 2, 5, 2, 3.0, "idle")
+    addAnimationToSpriteController(&testSprite.animationController, rl.Vector2{32, 0}, 3, 3, 3, 0.0, "smoke")
+    addAnimationToSpriteController(&testSprite.animationController, rl.Vector2{0, 16}, 5, 5, 5, -1.0, "jump")
 
-    ChangeSpriteAnimation(&frogSprite.animationController, "idle")
+    ChangeSpriteAnimation(&testSprite.animationController, "idle")
     // -----------------
 }
 
 cleanUpState :: proc(using state: ^State) {
     writeFrameHeader(&outLog, "UNLOAD")
 
-    free_SpriteAnimationController(&frogSprite.animationController, &state.outLog)
+    // TEXTURES
+    free_SpriteAnimationController(&testSprite.animationController, &state.outLog)
     
     for tag, texture in masterSprites {
         writeDataFreeToLog(&outLog, tag)
         rl.UnloadTexture(texture)
     }
+
+    // AUDIO
+    cleanUpAudioHandler(&audioHandler)
 
     writeLogToFile(&outLog)
 }
