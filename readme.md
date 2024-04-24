@@ -7,6 +7,10 @@
     - [x] inline comments
     - [ ] api style documentation
 - [x] debug log to output file
+- [ ] UI
+    - [ ] menus
+    - [ ] settings
+    - [ ] ingame forms (shops, inventories, etc.)
 - [ ] events
     - [ ] music events
         - [ ] dynamic pitch/speed change
