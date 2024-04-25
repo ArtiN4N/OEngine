@@ -45,6 +45,7 @@ setUpState :: proc(using state: ^State) {
 
     // testing audio --
     loadSoundToState(state, "resources/sound/coin.wav", "coin")
+    loadMusicToState(state, "resources/sound/music.mp3", "song")
 }
 
 cleanUpState :: proc(using state: ^State) {
@@ -92,7 +93,6 @@ loadMusicToState :: proc(using state: ^State, filename: cstring, tag: string) {
     writeAudioLoadToLog(&outLog, tag, rl.IsMusicReady(music))
 
     audioHandler.masterMusic[tag] = music
-
 }
 
 setStateDT :: proc(using state: ^State) {
