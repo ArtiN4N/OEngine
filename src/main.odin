@@ -19,6 +19,9 @@ main :: proc() {
     defer cleanUpState(&state)
 
     createNewSoundAlias(&state.audioHandler, "coin")
+    setAudioHandlerMusic(&state.audioHandler, "song")
+
+    playAudioHandlerMusic(&state.audioHandler)
 
     writeFrameHeader(&state.outLog, "GAME")
 
@@ -42,9 +45,13 @@ main :: proc() {
 
         if timer < 12.0 && timer + state.dt > 12.0 {
             ChangeSpriteAnimation(&state.testSprite.animationController, "idle")
+            setAudioHandlerMusic(&state.audioHandler, "song")
+            playAudioHandlerMusic(&state.audioHandler)
         }
 
         SpriteAnimationUpdate(&state.testSprite.animationController, state.dt, &state.outLog)
+        updateAudioHandler(&state.audioHandler)
+
         draw(state)
     }
 }
