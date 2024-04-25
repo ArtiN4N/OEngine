@@ -79,7 +79,7 @@ AudioHandler :: struct {
     playingSoundAliasBuffer: map[string]SoundAlias,
     generationCounter: int,
 
-    masterMusic: map[string]rl.Music
+    masterMusic: map[string]rl.Music,
 
     currentMusic: ^rl.Music
 }
@@ -90,7 +90,8 @@ init_AudioHandler :: proc() -> AudioHandler {
         make(map[string]rl.Sound),
         make(map[string]SoundAlias),
         0,
-        make(map[string]rl.Music)
+        make(map[string]rl.Music),
+        nil
     }
 }
 
@@ -141,7 +142,22 @@ createNewSoundAlias :: proc(using handler: ^AudioHandler, tag: string) -> string
 }
 
 setAudioHandlerMusic :: proc (using handler: ^AudioHandler, tag: string) {
+    if currentMusic != nil {
+        rl.StopMusicStream(currentMusic^)
+    }
     currentMusic = &masterMusic[tag]
+}
+
+playAudioHandlerMusic :: proc (using handler: ^AudioHandler) {
+    if currentMusic == nil || !rl.IsMusicReady(currentMusic^) {
+        return
+    }
+
+    if !rl.IsMusicStreamPlaying(currentMusic^) {
+        rl.PlayMusicStream(currentMusic^)
+    } else {
+        rl.ResumeMusicStream(currentMusic^)
+    }
 }
 
 updateAudioHandler :: proc (using handler: ^AudioHandler) {
@@ -149,5 +165,9 @@ updateAudioHandler :: proc (using handler: ^AudioHandler) {
         if alias.active && alias.dynamicControl != nil {
             updateDynamicAlias(&alias)
         }
+    }
+
+    if rl.IsMusicStreamPlaying(currentMusic^) {
+        rl.UpdateMusicStream(currentMusic^)
     }
 }
