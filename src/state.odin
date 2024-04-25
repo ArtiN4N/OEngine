@@ -44,7 +44,7 @@ setUpState :: proc(using state: ^State) {
     // -----------------
 
     // testing audio --
-    createNewSoundAlias(&audioHandler, "coin")
+    loadSoundToState(state, "resources/sound/coin.wav", "coin")
 }
 
 cleanUpState :: proc(using state: ^State) {
@@ -59,7 +59,7 @@ cleanUpState :: proc(using state: ^State) {
     }
 
     // AUDIO
-    cleanUpAudioHandler(&audioHandler)
+    cleanUpAudioHandler(&audioHandler, &outLog)
 
     writeLogToFile(&outLog)
 }
@@ -78,6 +78,13 @@ loadTextureToState :: proc(using state: ^State, filename: cstring, tag: string) 
     writeTextureLoadToLog(&outLog, tag, rl.IsTextureReady(texture))
 
     masterSprites[tag] = texture
+}
+
+loadSoundToState :: proc(using state: ^State, filename: cstring, tag: string) {
+    sound := rl.LoadSound(filename)
+    writeAudioLoadToLog(&outLog, tag, rl.IsSoundReady(sound))
+
+    audioHandler.masterSounds[tag] = sound
 }
 
 setStateDT :: proc(using state: ^State) {
