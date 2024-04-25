@@ -87,6 +87,14 @@ loadSoundToState :: proc(using state: ^State, filename: cstring, tag: string) {
     audioHandler.masterSounds[tag] = sound
 }
 
+loadMusicToState :: proc(using state: ^State, filename: cstring, tag: string) {
+    music := rl.LoadMusicStream(filename)
+    writeAudioLoadToLog(&outLog, tag, rl.IsMusicReady(music))
+
+    audioHandler.masterMusic[tag] = music
+
+}
+
 setStateDT :: proc(using state: ^State) {
     dt = rl.GetFrameTime()
 }

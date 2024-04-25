@@ -80,6 +80,8 @@ AudioHandler :: struct {
     generationCounter: int,
 
     masterMusic: map[string]rl.Music
+
+    currentMusic: ^rl.Music
 }
 
 init_AudioHandler :: proc() -> AudioHandler {
@@ -136,6 +138,10 @@ createNewSoundAlias :: proc(using handler: ^AudioHandler, tag: string) -> string
     rl.PlaySound(masterSounds[tag])
 
     return newTag
+}
+
+setAudioHandlerMusic :: proc (using handler: ^AudioHandler, tag: string) {
+    currentMusic = &masterMusic[tag]
 }
 
 updateAudioHandler :: proc (using handler: ^AudioHandler) {
