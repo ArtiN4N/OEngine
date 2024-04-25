@@ -11,6 +11,7 @@
     - [ ] menus
     - [ ] settings
     - [ ] ingame forms (shops, inventories, etc.)
+    - [ ] ingame input popups
 - [ ] events
     - [x] music events
         - [x] dynamic pitch/speed change
