@@ -34,6 +34,7 @@
     - [ ] audio effects
         - [ ] lpf
         - [ ] delay
+        - [x] speedup/slowdown
 - [ ] maps
     - [ ] loading from map file
         - [ ] decide on format
