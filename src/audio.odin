@@ -17,6 +17,27 @@ DynamicAliasControl :: struct {
     target: ^rl.Vector2
 }
 
+init_DynamicAliasControl :: proc(loc, dyn: bool, src, trgt: ^rl.Vector2) -> DynamicAliasControl {
+    return {
+        loc,
+        dyn,
+        src,
+        trgt,
+    }
+}
+
+addDynamicControlToAlias :: proc(using soundAlias: ^SoundAlias, loc, dyn: bool, src, trgt: ^rl.Vector2) {
+    dynamicControl = init_DynamicAliasControl(loc, dyn, src, trgt)
+}
+
+updateDynamicAlias :: proc(using soundAlias: ^SoundAlias) {
+    if dynamicControl == nil {
+        return
+    }
+
+
+}
+
 SoundAlias :: struct {
     alias: rl.Sound,
     generation: int,
@@ -90,12 +111,32 @@ cleanUpAudioHandler :: proc(using handler: ^AudioHandler) {
 }
 
 createNewSoundAlias :: proc(using handler: ^AudioHandler, tag: string) -> string {
-    alias := init_SoundAlias(&masterSounds[tag], &generationCounter)
 
     tagBuilder := strings.builder_make()
+
+    if !rl.IsSoundReady(masterSounds[tag]) {
+        fmt.sbprintf(&tagBuilder, "failure")
+        failTag := strings.to_string(tagBuilder)
+
+        return failTag
+    }
+
+    alias := init_SoundAlias(&masterSounds[tag], &generationCounter)
+
     fmt.sbprintf(&tagBuilder, "%s%d", tag, generationCounter)
     newTag := strings.to_string(tagBuilder)
 
     playingSoundAliasBuffer[newTag] = alias
+
+    rl.PlaySound(masterSounds[tag])
+
     return newTag
+}
+
+updateAudioHandler :: proc (using handler: ^AudioHandler) {
+    for tag, &alias in playingSoundAliasBuffer {
+        if alias.active && alias.dynamicControl != nil {
+            updateDynamicAlias(&alias)
+        }
+    }
 }
