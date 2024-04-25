@@ -53,7 +53,11 @@ writeTextureLoadToLog :: proc(using out: ^OutLog, tag: string, success: bool) {
     loads += 1
 }
 
-writeAudioLoadToLog :: proc(using out: ^OutLog, tag: string) {
+writeAudioLoadToLog :: proc(using out: ^OutLog, tag: string, success: bool) {
+    if !success {
+        writeToLog(out, fmt.tprintf("ERROR - Failed to load audio data from '%s'", tag))
+        return
+    }
     writeToLog(out, fmt.tprintf("Loaded audio data from tag '%s'", tag))
     loads += 1
 }
