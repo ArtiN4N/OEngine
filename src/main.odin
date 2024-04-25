@@ -25,7 +25,7 @@ main :: proc() {
     followTestVector := rl.Vector2{0, 0}
     sourceTestVector := rl.Vector2{0, 0}
 
-    makeAudioHandlerMusicDynamic(
+    attachDynamicAudioControlToMusic(
         &state.audioHandler,
         1.0,
         true, true,
@@ -58,6 +58,8 @@ main :: proc() {
 
         if timer < 5.0 && timer + state.dt > 5.0 {
             ChangeSpriteAnimation(&state.testSprite.animationController, "smoke")
+
+            setDyanmicPitchTargetWithSpeed(&state.audioHandler.dynamicMusicControl, 2.0, 0.1)
         }
 
         if timer < 10.0 && timer + state.dt > 10.0 {
@@ -66,10 +68,12 @@ main :: proc() {
 
         if timer < 12.0 && timer + state.dt > 12.0 {
             ChangeSpriteAnimation(&state.testSprite.animationController, "idle")
+            
+            setDyanmicPitchTargetWithSpeed(&state.audioHandler.dynamicMusicControl, 0.5, 0.1)
         }
 
         SpriteAnimationUpdate(&state.testSprite.animationController, state.dt, &state.outLog)
-        updateAudioHandler(&state.audioHandler)
+        updateAudioHandler(&state.audioHandler, state.dt)
 
         draw(state)
     }
