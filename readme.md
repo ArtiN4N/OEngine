@@ -30,7 +30,7 @@
 - [ ] audio
     - [x] background music
     - [x] sound fx
-    - [ ] locational audio
+    - [x] locational audio
     - [ ] audio effects
         - [ ] lpf
         - [ ] delay
