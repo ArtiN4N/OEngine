@@ -7,7 +7,7 @@ import rl "vendor:raylib"
 
 maxAliases :: 20
 
-DynamicAliasControl :: struct {
+DynamicAudioControl :: struct {
     // Plays in left or right ear depending on orientation from target
     locational: bool,
     // Is louder or quieter depending on distance from target
@@ -17,7 +17,7 @@ DynamicAliasControl :: struct {
     target: ^rl.Vector2
 }
 
-init_DynamicAliasControl :: proc(loc, dyn: bool, src, trgt: ^rl.Vector2) -> DynamicAliasControl {
+init_DynamicAudioControl :: proc(loc, dyn: bool, src, trgt: ^rl.Vector2) -> DynamicAudioControl {
     return {
         loc,
         dyn,
@@ -27,15 +27,11 @@ init_DynamicAliasControl :: proc(loc, dyn: bool, src, trgt: ^rl.Vector2) -> Dyna
 }
 
 addDynamicControlToAlias :: proc(using soundAlias: ^SoundAlias, loc, dyn: bool, src, trgt: ^rl.Vector2) {
-    dynamicControl = init_DynamicAliasControl(loc, dyn, src, trgt)
+    dynamicControl = init_DynamicAudioControl(loc, dyn, src, trgt)
 }
 
 updateDynamicAlias :: proc(using soundAlias: ^SoundAlias) {
-    if dynamicControl == nil {
-        return
-    }
-
-
+    if dynamicControl == nil do return
 }
 
 SoundAlias :: struct {
@@ -43,7 +39,7 @@ SoundAlias :: struct {
     generation: int,
 
     active: bool,
-    dynamicControl: Maybe(DynamicAliasControl)
+    dynamicControl: Maybe(DynamicAudioControl)
 }
 
 init_SoundAlias :: proc(sound: ^rl.Sound, generation: ^int) -> SoundAlias {
@@ -81,7 +77,8 @@ AudioHandler :: struct {
 
     masterMusic: map[string]rl.Music,
 
-    currentMusic: ^rl.Music
+    currentMusic: ^rl.Music,
+    dynamicMusicControl: Maybe(DynamicAudioControl)
 }
 
 init_AudioHandler :: proc() -> AudioHandler {
@@ -91,6 +88,7 @@ init_AudioHandler :: proc() -> AudioHandler {
         make(map[string]SoundAlias),
         0,
         make(map[string]rl.Music),
+        nil,
         nil
     }
 }
@@ -141,33 +139,36 @@ createNewSoundAlias :: proc(using handler: ^AudioHandler, tag: string) -> string
     return newTag
 }
 
-setAudioHandlerMusic :: proc (using handler: ^AudioHandler, tag: string) {
+setAudioHandlerMusic :: proc(using handler: ^AudioHandler, tag: string) {
     if currentMusic != nil {
         rl.StopMusicStream(currentMusic^)
     }
     currentMusic = &masterMusic[tag]
+    dynamicMusicControl = nil
 }
 
-playAudioHandlerMusic :: proc (using handler: ^AudioHandler) {
-    if currentMusic == nil || !rl.IsMusicReady(currentMusic^) {
-        return
-    }
-
-    if !rl.IsMusicStreamPlaying(currentMusic^) {
-        rl.PlayMusicStream(currentMusic^)
-    } else {
-        rl.ResumeMusicStream(currentMusic^)
-    }
+makeAudioHandlerMusicDynamic :: proc(using handler: ^AudioHandler, loc, dyn: bool, src, trgt: ^rl.Vector2) {
+    dynamicMusicControl = init_DynamicAudioControl(loc, dyn, src, trgt)
 }
 
-updateAudioHandler :: proc (using handler: ^AudioHandler) {
+playAudioHandlerMusic :: proc(using handler: ^AudioHandler) {
+    if currentMusic == nil || !rl.IsMusicReady(currentMusic^) do return
+
+    if !rl.IsMusicStreamPlaying(currentMusic^) do rl.PlayMusicStream(currentMusic^)
+        
+    else do rl.ResumeMusicStream(currentMusic^)
+}
+
+updateAudioHandler :: proc(using handler: ^AudioHandler) {
     for tag, &alias in playingSoundAliasBuffer {
-        if alias.active && alias.dynamicControl != nil {
-            updateDynamicAlias(&alias)
-        }
+        if alias.active && alias.dynamicControl != nil do updateDynamicAlias(&alias)
     }
 
     if rl.IsMusicStreamPlaying(currentMusic^) {
+        if dynamicMusicControl != nil {
+
+        }
+
         rl.UpdateMusicStream(currentMusic^)
     }
 }
