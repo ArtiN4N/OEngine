@@ -83,6 +83,7 @@ AudioHandler :: struct {
 }
 
 init_AudioHandler :: proc() -> AudioHandler {
+    rl.InitAudioDevice()
     return {
         make(map[string]rl.Sound),
         make(map[string]SoundAlias),
@@ -91,7 +92,7 @@ init_AudioHandler :: proc() -> AudioHandler {
     }
 }
 
-cleanUpAudioHandler :: proc(using handler: ^AudioHandler) {
+cleanUpAudioHandler :: proc(using handler: ^AudioHandler, log: ^OutLog) {
     for tag, &alias in playingSoundAliasBuffer {
         if alias.active {
             cleanUpSoundAlias(&alias)
@@ -101,13 +102,17 @@ cleanUpAudioHandler :: proc(using handler: ^AudioHandler) {
 
     for tag, sound in masterSounds {
         rl.UnloadSound(sound)
+        writeDataFreeToLog(log, tag)
     }
     delete(masterSounds)
 
     for tag, music in masterMusic {
         rl.UnloadMusicStream(music)
+        writeDataFreeToLog(log, tag)
     }
     delete(masterMusic)
+
+    rl.CloseAudioDevice()
 }
 
 createNewSoundAlias :: proc(using handler: ^AudioHandler, tag: string) -> string {
