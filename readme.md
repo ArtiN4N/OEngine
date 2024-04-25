@@ -28,7 +28,7 @@
     - [ ] automatic animation data creation from spritesheet
     - [ ] automatic collision box data creation from spritesheet
 - [ ] audio
-    - [ ] background music
+    - [x] background music
     - [x] sound fx
     - [ ] locational audio
     - [ ] audio effects
