@@ -12,8 +12,8 @@
     - [ ] settings
     - [ ] ingame forms (shops, inventories, etc.)
 - [ ] events
-    - [ ] music events
-        - [ ] dynamic pitch/speed change
+    - [x] music events
+        - [x] dynamic pitch/speed change
         - [ ] transition into another track
     - [ ] map events
 - [ ] input handling
