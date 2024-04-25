@@ -8,30 +8,44 @@ import rl "vendor:raylib"
 maxAliases :: 20
 
 DynamicAudioControl :: struct {
-    // Plays in left or right ear depending on orientation from target
+    defaultVolume: f32,
+    // Plays in left or right ear depending on orientation from source
     locational: bool,
-    // Is louder or quieter depending on distance from target
+    // Is louder or quieter depending on distance from source
     dynamical: bool,
 
     source: ^rl.Vector2,
-    target: ^rl.Vector2
+    follow: ^rl.Vector2,
+
+    // dynamicScale determines how the audio changes in volume as source differs from follow.
+    // For each multiple of scale.x that follow is away from source.x, the audio decreases by .01
+    // Works the same for the y axis.
+    // Works the same for locationalScale
+    locationalScale: rl.Vector2,
+    dynamicScale: rl.Vector2,
 }
 
-init_DynamicAudioControl :: proc(loc, dyn: bool, src, trgt: ^rl.Vector2) -> DynamicAudioControl {
+init_DynamicAudioControl :: proc(defaultVol: f32, loc, dyn: bool, src, folw: ^rl.Vector2, locScale, dynScale: rl.Vector2) -> DynamicAudioControl {
     return {
-        loc,
-        dyn,
-        src,
-        trgt,
+        defaultVol,
+        loc, dyn,
+        src, folw,
+        locScale, dynScale,
     }
 }
 
-addDynamicControlToAlias :: proc(using soundAlias: ^SoundAlias, loc, dyn: bool, src, trgt: ^rl.Vector2) {
-    dynamicControl = init_DynamicAudioControl(loc, dyn, src, trgt)
-}
-
-updateDynamicAlias :: proc(using soundAlias: ^SoundAlias) {
-    if dynamicControl == nil do return
+addDynamicControlToAlias :: proc(
+    using soundAlias: ^SoundAlias, 
+    defaultVol: f32, 
+    loc, dyn: bool, 
+    src, folw: ^rl.Vector2, 
+    locScale, dynScale: rl.Vector2
+) {
+    dynamicControl = init_DynamicAudioControl(defaultVol,
+        loc, dyn,
+        src, folw,
+        locScale, dynScale,
+    )
 }
 
 SoundAlias :: struct {
@@ -83,6 +97,7 @@ AudioHandler :: struct {
 
 init_AudioHandler :: proc() -> AudioHandler {
     rl.InitAudioDevice()
+    rl.SetMasterVolume(1.0)
     return {
         make(map[string]rl.Sound),
         make(map[string]SoundAlias),
@@ -139,16 +154,24 @@ createNewSoundAlias :: proc(using handler: ^AudioHandler, tag: string) -> string
     return newTag
 }
 
-setAudioHandlerMusic :: proc(using handler: ^AudioHandler, tag: string) {
+setAudioHandlerMusic :: proc(using handler: ^AudioHandler, tag: string, volume: f32) {
     if currentMusic != nil {
         rl.StopMusicStream(currentMusic^)
     }
     currentMusic = &masterMusic[tag]
     dynamicMusicControl = nil
+
+    rl.SetMusicVolume(currentMusic^, volume)
 }
 
-makeAudioHandlerMusicDynamic :: proc(using handler: ^AudioHandler, loc, dyn: bool, src, trgt: ^rl.Vector2) {
-    dynamicMusicControl = init_DynamicAudioControl(loc, dyn, src, trgt)
+makeAudioHandlerMusicDynamic :: proc(
+    using handler: ^AudioHandler, 
+    defaultVol: f32, 
+    loc, dyn: bool, 
+    src, folw: ^rl.Vector2, 
+    locScale, dynScale: rl.Vector2
+) {
+    dynamicMusicControl = init_DynamicAudioControl(defaultVol, loc, dyn, src, folw, dynScale, locScale)
 }
 
 playAudioHandlerMusic :: proc(using handler: ^AudioHandler) {
@@ -165,10 +188,39 @@ updateAudioHandler :: proc(using handler: ^AudioHandler) {
     }
 
     if rl.IsMusicStreamPlaying(currentMusic^) {
-        if dynamicMusicControl != nil {
-
-        }
+        if dynamicMusicControl != nil do updateDynamicMusic(handler)
 
         rl.UpdateMusicStream(currentMusic^)
     }
+}
+
+updateDynamicMusic :: proc(using handler: ^AudioHandler) {
+    if dynamicMusicControl == nil do return
+
+    if dynamicMusicControl.?.locational {
+        if dynamicMusicControl.?.follow == nil || dynamicMusicControl.?.source == nil do return
+
+        xDist := dynamicMusicControl.?.source^.x - dynamicMusicControl.?.follow^.x
+        xPanScale := xDist / dynamicMusicControl.?.dynamicScale.x 
+        if xPanScale > 5.0 do xPanScale = 5.0
+        if xPanScale < -5.0 do xPanScale = -5.0
+
+        // Changes audio pan by units of 0.1
+        rl.SetMusicPan(currentMusic^, 0.5 + (xPanScale * 0.1))
+    }
+
+    if dynamicMusicControl.?.dynamical {
+        if dynamicMusicControl.?.follow == nil || dynamicMusicControl.?.source == nil do return
+
+        xDist := abs(dynamicMusicControl.?.source^.x - dynamicMusicControl.?.follow^.x)
+        xVolScale := xDist / dynamicMusicControl.?.dynamicScale.x 
+        if xVolScale > 10.0 do xVolScale = 10.0
+
+        // Changes audio volume by units of 0.1
+        rl.SetMusicVolume(currentMusic^, dynamicMusicControl.?.defaultVolume - (xVolScale * 0.1))
+    }
+}
+
+updateDynamicAlias :: proc(using soundAlias: ^SoundAlias) {
+    if dynamicControl == nil do return
 }
