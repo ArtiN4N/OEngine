@@ -18,6 +18,8 @@ main :: proc() {
     setUpState(&state)
     defer cleanUpState(&state)
 
+    createNewSoundAlias(&state.audioHandler, "coin")
+
     writeFrameHeader(&state.outLog, "GAME")
 
     rl.SetTargetFPS(60)
