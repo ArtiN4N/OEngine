@@ -28,8 +28,8 @@ init_State :: proc() -> State {
 }
 
 setUpState :: proc(using state: ^State) {
-    loadTextureToState(state, "resources/exception.png", "exception")
-    loadTextureToState(state, "resources/frogsheet.png", "frogsheet")
+    loadTextureToState(state, "resources/img/exception.png", "exception")
+    loadTextureToState(state, "resources/img/frogsheet.png", "frogsheet")
 
     // testing sprite --
     testSprite = init_Sprite(rl.Vector2{16, 16}, &masterSprites["frogsheet"], rl.Vector2{0, 0}, rl.Vector2{0, 0})
@@ -42,6 +42,9 @@ setUpState :: proc(using state: ^State) {
 
     ChangeSpriteAnimation(&testSprite.animationController, "idle")
     // -----------------
+
+    // testing audio --
+    createNewSoundAlias(&audioHandler, "coin")
 }
 
 cleanUpState :: proc(using state: ^State) {
