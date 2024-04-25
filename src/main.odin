@@ -18,10 +18,23 @@ main :: proc() {
     setUpState(&state)
     defer cleanUpState(&state)
 
+    // Audio testing --
     createNewSoundAlias(&state.audioHandler, "coin")
-    setAudioHandlerMusic(&state.audioHandler, "song")
+    setAudioHandlerMusic(&state.audioHandler, "song", 1.0)
+
+    followTestVector := rl.Vector2{0, 0}
+    sourceTestVector := rl.Vector2{0, 0}
+
+    makeAudioHandlerMusicDynamic(
+        &state.audioHandler,
+        1.0,
+        true, true,
+        &followTestVector, &sourceTestVector,
+        rl.Vector2{100, 100}, rl.Vector2{100, 100},
+    )
 
     playAudioHandlerMusic(&state.audioHandler)
+    // ------
 
     writeFrameHeader(&state.outLog, "GAME")
 
@@ -35,6 +48,14 @@ main :: proc() {
 
         timer += state.dt
 
+        if rl.IsKeyDown(rl.KeyboardKey.A) {
+            followTestVector.x -= 100 * state.dt
+        }
+
+        if rl.IsKeyDown(rl.KeyboardKey.D) {
+            followTestVector.x += 100 * state.dt
+        }
+
         if timer < 5.0 && timer + state.dt > 5.0 {
             ChangeSpriteAnimation(&state.testSprite.animationController, "smoke")
         }
@@ -45,8 +66,6 @@ main :: proc() {
 
         if timer < 12.0 && timer + state.dt > 12.0 {
             ChangeSpriteAnimation(&state.testSprite.animationController, "idle")
-            setAudioHandlerMusic(&state.audioHandler, "song")
-            playAudioHandlerMusic(&state.audioHandler)
         }
 
         SpriteAnimationUpdate(&state.testSprite.animationController, state.dt, &state.outLog)
