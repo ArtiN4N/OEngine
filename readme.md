@@ -18,7 +18,9 @@
         - [ ] transition into another track
     - [ ] map events
 - [ ] input handling
+    - [ ] input to callback
     - [ ] movement input
+        - [ ] manual key assignment by user
     - [ ] input with cooldown
     - [ ] shortcuts and combination keys
     - [ ] receive typed text
