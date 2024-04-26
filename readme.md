@@ -20,7 +20,6 @@
 - [ ] input handling
     - [x] input to callback
     - [ ] manual key assignment by user
-    - [ ] input with cooldown
     - [ ] shortcuts and combination keys
     - [x] receive typed text
         - [ ] automatic backspaces when holding down key
