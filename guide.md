@@ -19,3 +19,4 @@ SPRITES:
     USE:
         - use ```ChangeSpriteAnimation(controller, tag)``` to change the animation
         - use ```SpriteAnimationUpdate(controller, dt, outlog)``` to update animations
+        - use ```drawSprite(sprite, rotation)``` to draw sprite/animations
