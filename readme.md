@@ -22,7 +22,8 @@
     - [ ] manual key assignment by user
     - [ ] input with cooldown
     - [ ] shortcuts and combination keys
-    - [ ] receive typed text
+    - [x] receive typed text
+        - [ ] automatic backspaces when holding down key
 - [ ] sprites
     - [x] sprite drawing
     - [x] sprite animation
