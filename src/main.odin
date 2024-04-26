@@ -5,7 +5,7 @@ import "core:strings"
 
 import rl "vendor:raylib"
 
-aPressCallback :: proc(state: ^State) {
+aPressCallback :: proc(state: ^State, key: rl.KeyboardKey, tag: string) {
     state.counter += 1
 }
 

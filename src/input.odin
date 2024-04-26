@@ -4,7 +4,7 @@ import "core:fmt"
 
 import rl "vendor:raylib"
 
-inputCallback :: proc(state: ^State)
+inputCallback :: proc(state: ^State, key: rl.KeyboardKey, tag: string)
 
 InputHandler :: struct {
     keyEvents: map[string]rl.KeyboardKey,
@@ -25,6 +25,6 @@ addInputCallbackOnKeyPress :: proc(using handler: ^InputHandler, key: rl.Keyboar
 
 checkInput :: proc(using handler: InputHandler, state: ^State) {
     for tag, key in keyEvents {
-        if rl.IsKeyPressed(key) do keyCallbacks[tag](state)
+        if rl.IsKeyPressed(key) do keyCallbacks[tag](state, key, tag)
     }
 }
