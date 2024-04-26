@@ -26,10 +26,6 @@ main :: proc() {
         setStateDT(&state)
         stepOutLog(&state.outLog, state.dt)
 
-        if rl.IsKeyDown(rl.KeyboardKey.A) {
-            followTestVector.x -= 100 * state.dt
-        }
-
         SpriteAnimationUpdate(&state.testSprite.animationController, state.dt, &state.outLog)
         updateAudioHandler(&state.audioHandler, state.dt)
 
