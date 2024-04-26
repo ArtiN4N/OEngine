@@ -205,6 +205,8 @@ updateAudioHandler :: proc(using handler: ^AudioHandler, dt: f32) {
         if alias.active && alias.dynamicControl.active do updateDynamicAlias(&alias)
     }
 
+    if currentMusic == nil do return
+
     if rl.IsMusicStreamPlaying(currentMusic^) {
         if dynamicMusicControl.active do updateDynamicMusic(handler, dt)
 
