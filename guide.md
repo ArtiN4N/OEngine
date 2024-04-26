@@ -20,3 +20,9 @@ SPRITES:
         - use ```ChangeSpriteAnimation(controller, tag)``` to change the animation
         - use ```SpriteAnimationUpdate(controller, dt, outlog)``` to update animations
         - use ```drawSprite(sprite, rotation)``` to draw sprite/animations
+INPUT:
+    USE:
+        - use ```addInputCallbackOnKey(handler, key, tag, callback)``` to add a callback to a key press
+        - use ```changeTaggedKey(handler, key, tag, callback)``` to change callback by key press
+        - use ```checkInput(handler, state)``` to check input
+        - use ```getInputTypedText(handler)``` to get realtime text input
