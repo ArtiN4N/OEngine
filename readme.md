@@ -30,7 +30,9 @@
     - [ ] automatic collision box data creation from spritesheet
 - [ ] audio
     - [x] background music
+        - [x] dynamic music
     - [x] sound fx
+        - [ ] dynamic sfx
     - [x] locational audio
     - [ ] audio effects
         - [ ] lpf
