@@ -19,8 +19,7 @@
     - [ ] map events
 - [ ] input handling
     - [x] input to callback
-    - [ ] movement input
-        - [ ] manual key assignment by user
+    - [ ] manual key assignment by user
     - [ ] input with cooldown
     - [ ] shortcuts and combination keys
     - [ ] receive typed text
