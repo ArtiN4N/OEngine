@@ -24,5 +24,6 @@ INPUT:
     USE:
         - use ```addInputCallbackOnKey(handler, key, tag, callback)``` to add a callback to a key press
         - use ```changeTaggedKey(handler, key, tag, callback)``` to change callback by key press
+        - create a callback on input with a procedure defined as ```proc(state: ^State, key: rl.KeyboardKey, tag: string)```
         - use ```checkInput(handler, state)``` to check input
         - use ```getInputTypedText(handler)``` to get realtime text input
