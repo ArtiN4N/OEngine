@@ -4,6 +4,9 @@ import "core:fmt"
 
 import rl "vendor:raylib"
 
+
+
 InputHandler :: struct {
     keyEvents: map[string]rl.KeyboardKey,
+    keyCallbacks: map[string]
 }
