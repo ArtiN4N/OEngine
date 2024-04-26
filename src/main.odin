@@ -5,10 +5,6 @@ import "core:strings"
 
 import rl "vendor:raylib"
 
-aPressCallback :: proc(state: ^State, key: rl.KeyboardKey, tag: string) {
-    state.counter += 1
-}
-
 main :: proc() {
 
     rl.InitWindow(1, 1, "")
@@ -16,17 +12,8 @@ main :: proc() {
 
     state := init_State()
 
-    writeFrameHeader(&state.outLog, "LOAD")
-    setStateWindow(&state, 400, 400, "OEngine Test")
-
     setUpState(&state)
     defer cleanUpState(&state)
-
-    writeFrameHeader(&state.outLog, "GAME")
-
-    // input --
-    addInputCallbackOnKey(&state.inputHandler, rl.KeyboardKey.A, "apress", aPressCallback)
-    // -----------------
 
     rl.SetTargetFPS(60)
 
