@@ -5,6 +5,10 @@ import "core:strings"
 
 import rl "vendor:raylib"
 
+aPressCallback :: proc(state: ^State) {
+    state.counter += 1
+}
+
 main :: proc() {
 
     rl.InitWindow(1, 1, "")
@@ -20,11 +24,17 @@ main :: proc() {
 
     writeFrameHeader(&state.outLog, "GAME")
 
+    // input --
+    addInputCallbackOnKeyPress(&state.inputHandler, rl.KeyboardKey.A, "apress", aPressCallback)
+    // -----------------
+
     rl.SetTargetFPS(60)
 
     for !rl.WindowShouldClose() {
         setStateDT(&state)
         stepOutLog(&state.outLog, state.dt)
+
+        checkInput(state.inputHandler, &state)
 
         SpriteAnimationUpdate(&state.testSprite.animationController, state.dt, &state.outLog)
         updateAudioHandler(&state.audioHandler, state.dt)
@@ -38,6 +48,8 @@ draw :: proc(state: State) {
     defer rl.EndDrawing()
 
     rl.ClearBackground(rl.RAYWHITE)
+
+    rl.DrawText(fmt.caprintf("Counter = %d", state.counter), 50, 50, 50, rl.RED)
 
     rl.DrawFPS(10, 10)
 }

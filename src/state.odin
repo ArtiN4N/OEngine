@@ -7,6 +7,7 @@ import rl "vendor:raylib"
 State :: struct {
     outLog: OutLog,
     audioHandler: AudioHandler,
+    inputHandler: InputHandler,
 
     windowSize: rl.Vector2,
 
@@ -15,15 +16,18 @@ State :: struct {
     masterSprites: map[string]rl.Texture2D,
 
     testSprite: Sprite,
+
+    counter: int,
 }
 
 init_State :: proc() -> State {
     return {
-        init_OutLog(), init_AudioHandler(),
+        init_OutLog(), init_AudioHandler(), init_InputHandler(),
         rl.Vector2{0, 0},
         0.0,
         make(map[string]rl.Texture2D),
-        init_Sprite(rl.Vector2{0, 0}, nil, rl.Vector2{0, 0}, rl.Vector2{0, 0})
+        init_Sprite(rl.Vector2{0, 0}, nil, rl.Vector2{0, 0}, rl.Vector2{0, 0}),
+        0,
     }
 }
 
@@ -46,6 +50,7 @@ setUpState :: proc(using state: ^State) {
     // testing audio --
     loadSoundToState(state, "resources/sound/coin.wav", "coin")
     loadMusicToState(state, "resources/sound/music.mp3", "song")
+    // -----------------
 }
 
 cleanUpState :: proc(using state: ^State) {
