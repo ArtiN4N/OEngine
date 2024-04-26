@@ -25,7 +25,7 @@ main :: proc() {
     writeFrameHeader(&state.outLog, "GAME")
 
     // input --
-    addInputCallbackOnKeyPress(&state.inputHandler, rl.KeyboardKey.A, "apress", aPressCallback)
+    addInputCallbackOnKey(&state.inputHandler, rl.KeyboardKey.A, "apress", aPressCallback)
     // -----------------
 
     rl.SetTargetFPS(60)

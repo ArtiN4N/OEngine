@@ -9,6 +9,8 @@ inputCallback :: proc(state: ^State, key: rl.KeyboardKey, tag: string)
 InputHandler :: struct {
     keyEvents: map[string]rl.KeyboardKey,
     keyCallbacks: map[string]inputCallback,
+
+    
 }
 
 init_InputHandler :: proc() -> InputHandler {
@@ -18,13 +20,13 @@ init_InputHandler :: proc() -> InputHandler {
     }
 }
 
-addInputCallbackOnKeyPress :: proc(using handler: ^InputHandler, key: rl.KeyboardKey, tag: string, callback: inputCallback) {
+addInputCallbackOnKey :: proc(using handler: ^InputHandler, key: rl.KeyboardKey, tag: string, callback: inputCallback) {
     keyEvents[tag] = key
     keyCallbacks[tag] = callback
 }
 
 checkInput :: proc(using handler: InputHandler, state: ^State) {
     for tag, key in keyEvents {
-        if rl.IsKeyPressed(key) do keyCallbacks[tag](state, key, tag)
+        if rl.IsKeyDown(key) do keyCallbacks[tag](state, key, tag)
     }
 }
