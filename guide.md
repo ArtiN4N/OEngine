@@ -1,0 +1,21 @@
+AUDIO:
+    INITIALIZATION:
+        IN ```setUpState()```:
+        - use ```loadSoundToState()```
+        - use ```attachDynamicAudioControlToMusic(handler, ...)``` to make music/alias dynamic
+    USE:
+        - use ```createNewSoundAlias(handler, tag)``` to create and play new sfx
+        - use ```setAudioHandlerMusic(handler, tag, volume)``` to set music track
+        - use ```playAudioHandlerMusic(handler)``` to play music track
+        - use ```setDyanmicPitchTargetWithSpeed(handler, target, speed)``` to change pitch/speed of music track
+        - use ```updateAudioHandler(handler, dt)``` to update audio
+SPRITES:
+    INITIALIZATION:
+        IN ```setUpState()```:
+        - use ```loadTextureToState()```
+        - create sprite with ```sprite = init_Sprite()```
+        - use ```attachSpriteAnimationController(&sprite, outlog)``` to make it animate-able
+        - use ```addAnimationToSpriteController(controller, offset in spritesheet, ..., tag name)```
+    USE:
+        - use ```ChangeSpriteAnimation(controller, tag)``` to change the animation
+        - use ```SpriteAnimationUpdate(controller, dt, outlog)``` to update animations
