@@ -38,7 +38,10 @@ changeTaggedKey :: proc(using handler: ^InputHandler, key: rl.KeyboardKey, tag: 
 }
 
 checkInput :: proc(using handler: ^InputHandler, state: ^State) {
-    if rl.IsKeyPressed(rl.KeyboardKey.TAB) do typingMode = !typingMode
+    if rl.IsKeyPressed(rl.KeyboardKey.TAB) {
+        typingMode = !typingMode
+        strings.builder_reset(&typingText)
+    }
 
     if typingMode {
         curChar := rl.GetCharPressed()
