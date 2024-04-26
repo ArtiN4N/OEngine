@@ -10,7 +10,7 @@ InputHandler :: struct {
     keyEvents: map[string]rl.KeyboardKey,
     keyCallbacks: map[string]inputCallback,
 
-    
+
 }
 
 init_InputHandler :: proc() -> InputHandler {
@@ -23,6 +23,13 @@ init_InputHandler :: proc() -> InputHandler {
 addInputCallbackOnKey :: proc(using handler: ^InputHandler, key: rl.KeyboardKey, tag: string, callback: inputCallback) {
     keyEvents[tag] = key
     keyCallbacks[tag] = callback
+}
+
+changeTaggedKey :: proc(using handler: ^InputHandler, key: rl.KeyboardKey, tag: string, callback: inputCallback) {
+    delete_key(&keyEvents, tag)
+    delete_key(&keyCallbacks, tag)
+
+    addInputCallbackOnKey(handler, key, tag, callback)
 }
 
 checkInput :: proc(using handler: InputHandler, state: ^State) {
