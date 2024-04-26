@@ -34,7 +34,7 @@ main :: proc() {
         setStateDT(&state)
         stepOutLog(&state.outLog, state.dt)
 
-        checkInput(state.inputHandler, &state)
+        checkInput(&state.inputHandler, &state)
 
         SpriteAnimationUpdate(&state.testSprite.animationController, state.dt, &state.outLog)
         updateAudioHandler(&state.audioHandler, state.dt)
@@ -49,7 +49,7 @@ draw :: proc(state: State) {
 
     rl.ClearBackground(rl.RAYWHITE)
 
-    rl.DrawText(fmt.caprintf("Counter = %d", state.counter), 50, 50, 50, rl.RED)
+    rl.DrawText(getInputTypedText(state.inputHandler), 50, 50, 50, rl.RED)
 
     rl.DrawFPS(10, 10)
 }
