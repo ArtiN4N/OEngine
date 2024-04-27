@@ -5,6 +5,8 @@ import "core:strings"
 
 import rl "vendor:raylib"
 
+// inputcallback is a procedure signature that defines how callbacks should be built
+// callbacks will be automatically called when their assigned key is pressed down
 inputCallback :: proc(state: ^State, key: rl.KeyboardKey, tag: string)
 
 InputHandler :: struct {
