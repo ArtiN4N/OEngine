@@ -35,6 +35,8 @@ destroy_State :: proc(using state: ^State) {
 
     destroy_SpriteHandler(&spriteHandler, &state.outLog)
 
+    destroy_InputHandler(&inputHandler, &state.outLog)
+
     // AUDIO
     cleanUpAudioHandler(&audioHandler, &outLog)
 

@@ -15,7 +15,10 @@ InputHandler :: struct {
     typingText: strings.Builder,
 }
 
-init_InputHandler :: proc() -> InputHandler {
+init_InputHandler :: proc(log: ^OutLog) -> InputHandler {
+    writeAllocToLog(log, "inputHandler.keyEvents")
+    writeAllocToLog(log, "inputHandler.keyCallbacks")
+
     return {
         make(map[string]rl.KeyboardKey),
         make(map[string]inputCallback),
@@ -23,6 +26,14 @@ init_InputHandler :: proc() -> InputHandler {
         false,
         strings.builder_make(),
     }
+}
+
+destroy_InputHandler :: proc(using handler: ^InputHandler, log: ^OutLog) {
+    delete(keyEvents)
+    writeAllocFreeToLog(log, "inputHandler.keyEvents")
+
+    delete(keyCallbacks)
+    writeAllocFreeToLog(log, "inputHandler.keyCallbacks")
 }
 
 addInputCallbackOnKey :: proc(using handler: ^InputHandler, key: rl.KeyboardKey, tag: string, callback: inputCallback) {
@@ -38,20 +49,16 @@ changeTaggedKey :: proc(using handler: ^InputHandler, key: rl.KeyboardKey, tag: 
 }
 
 checkInput :: proc(using handler: ^InputHandler, state: ^State) {
+    // placeholder method to change to typing mode
     if rl.IsKeyPressed(rl.KeyboardKey.TAB) {
         typingMode = !typingMode
         strings.builder_reset(&typingText)
     }
 
     if typingMode {
-        curChar := rl.GetCharPressed()
-        for curChar > 0 {
-            fmt.printf("%c\n", curChar)
-            strings.write_rune(&typingText, curChar)
-            
-
-            curChar = rl.GetCharPressed()
-        }
+        // loops through the getcharpressed() queue of inputted chars
+        // only takes in chars that can be displayed (i.e. no return, backspace, etc.)
+        for curChar := rl.GetCharPressed(); curChar > 0; curChar = rl.GetCharPressed() do strings.write_rune(&typingText, curChar)
 
         if rl.IsKeyPressed(rl.KeyboardKey.BACKSPACE) do strings.pop_rune(&typingText)
         return
