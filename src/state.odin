@@ -8,66 +8,32 @@ State :: struct {
     outLog: OutLog,
     audioHandler: AudioHandler,
     inputHandler: InputHandler,
+    spriteHandler: SpriteHandler,
 
     windowSize: rl.Vector2,
 
     dt: f32,
-
-    masterSprites: map[string]rl.Texture2D,
-
-    testSprite: Sprite,
-
-    counter: int,
 }
 
 init_State :: proc() -> State {
-    return {
-        init_OutLog(), init_AudioHandler(), init_InputHandler(),
+    state: State = {
+        init_OutLog(), init_AudioHandler(), init_InputHandler(), init_SpriteHandler(),
         rl.Vector2{0, 0},
         0.0,
-        make(map[string]rl.Texture2D),
-        init_Sprite(rl.Vector2{0, 0}, nil, rl.Vector2{0, 0}, rl.Vector2{0, 0}),
-        0,
     }
-}
 
-setUpState :: proc(using state: ^State) {
     writeFrameHeader(&state.outLog, "LOAD")
     setStateWindow(&state, 400, 400, "OEngine Test")
-    
-    loadTextureToState(state, "resources/img/exception.png", "exception")
-    loadTextureToState(state, "resources/img/frogsheet.png", "frogsheet")
-
-    // testing sprite --
-    testSprite = init_Sprite(rl.Vector2{16, 16}, &masterSprites["frogsheet"], rl.Vector2{0, 0}, rl.Vector2{0, 0})
-
-    attachSpriteAnimationController(&testSprite, &state.outLog)
-
-    addAnimationToSpriteController(&testSprite.animationController, rl.Vector2{0, 0}, 2, 5, 2, 3.0, "idle")
-    addAnimationToSpriteController(&testSprite.animationController, rl.Vector2{32, 0}, 3, 3, 3, 0.0, "smoke")
-    addAnimationToSpriteController(&testSprite.animationController, rl.Vector2{0, 16}, 5, 5, 5, -1.0, "jump")
-
-    ChangeSpriteAnimation(&testSprite.animationController, "idle")
-    // -----------------
-
-    // testing audio --
-    loadSoundToState(state, "resources/sound/coin.wav", "coin")
-    loadMusicToState(state, "resources/sound/music.mp3", "song")
-    // -----------------
 
     writeFrameHeader(&state.outLog, "GAME")
+
+    return state
 }
 
-cleanUpState :: proc(using state: ^State) {
+destroy_State :: proc(using state: ^State) {
     writeFrameHeader(&outLog, "UNLOAD")
 
-    // TEXTURES
-    free_SpriteAnimationController(&testSprite.animationController, &state.outLog)
-    
-    for tag, texture in masterSprites {
-        writeDataFreeToLog(&outLog, tag)
-        rl.UnloadTexture(texture)
-    }
+    destroy_SpriteHandler(&spriteHandler, &state.outLog)
 
     // AUDIO
     cleanUpAudioHandler(&audioHandler, &outLog)
@@ -88,7 +54,7 @@ loadTextureToState :: proc(using state: ^State, filename: cstring, tag: string) 
     texture := rl.LoadTexture(filename)
     writeTextureLoadToLog(&outLog, tag, rl.IsTextureReady(texture))
 
-    masterSprites[tag] = texture
+    spriteHandler.masterSprites[tag] = texture
 }
 
 loadSoundToState :: proc(using state: ^State, filename: cstring, tag: string) {
