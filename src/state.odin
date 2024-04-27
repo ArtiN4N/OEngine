@@ -32,6 +32,9 @@ init_State :: proc() -> State {
 }
 
 setUpState :: proc(using state: ^State) {
+    writeFrameHeader(&state.outLog, "LOAD")
+    setStateWindow(&state, 400, 400, "OEngine Test")
+    
     loadTextureToState(state, "resources/img/exception.png", "exception")
     loadTextureToState(state, "resources/img/frogsheet.png", "frogsheet")
 
@@ -51,6 +54,8 @@ setUpState :: proc(using state: ^State) {
     loadSoundToState(state, "resources/sound/coin.wav", "coin")
     loadMusicToState(state, "resources/sound/music.mp3", "song")
     // -----------------
+
+    writeFrameHeader(&state.outLog, "GAME")
 }
 
 cleanUpState :: proc(using state: ^State) {
