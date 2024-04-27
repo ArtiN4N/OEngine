@@ -58,12 +58,14 @@ createNewSpriteAlias :: proc(
     tag: string, log: ^OutLog
 ) -> string {
 
+    tag := tag
+
     tagBuilder := strings.builder_make()
 
     // if the texture being referenced does not exist, then log an error
     if !rl.IsTextureReady(masterSprites[tag]) {
         // this will cause the new sprite alias to reference the exception texture that is pre-loaded
-        tag = "exception"
+        tag = getStateTextureExceptionTag()
 
         writeToLog(log, fmt.tprintf("ERROR - Tried referencing texture data from invalid tag '%s'", tag))
     }
