@@ -44,8 +44,8 @@ getFrameSourcePosition :: proc(using sprite: Sprite) -> (f32, f32) {
         x += currentAnimation.animationSourceOffset.x
         y += currentAnimation.animationSourceOffset.y
         
-        x += spriteSize.x * auto_cast (curFrame % currentAnimation.framePeriod)
-        y += spriteSize.y * auto_cast (curFrame / currentAnimation.framePeriod)
+        x += spriteSize.x * auto_cast (currentFrame % currentAnimation.framePeriod)
+        y += spriteSize.y * auto_cast (currentFrame / currentAnimation.framePeriod)
     }
 
     return x, y
