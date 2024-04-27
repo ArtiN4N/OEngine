@@ -25,6 +25,8 @@ init_State :: proc() -> State {
     writeFrameHeader(&state.outLog, "LOAD")
     setStateWindow(&state, 400, 400, "OEngine Test")
 
+    loadTextureToState(&state, "resources/img/exception.png", "exception")
+
     writeFrameHeader(&state.outLog, "GAME")
 
     return state

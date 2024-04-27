@@ -67,7 +67,7 @@ getSpriteSourceRec :: proc(using sprite: Sprite) -> rl.Rectangle {
     }
 }
 
-drawSprite :: proc(using sprite: Sprite, rotation: f32) {
+draw_Sprite :: proc(using sprite: Sprite, rotation: f32) {
     rl.DrawTexturePro(
         texture^,
         getSpriteSourceRec(sprite), 

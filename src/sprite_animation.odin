@@ -59,19 +59,20 @@ destroy_AnimationControl :: proc(using control: ^AnimationControl, tag: string, 
     delete(animations)
 }
 
-addAnimationToControl :: proc(
-    using controller: ^AnimationControl, 
+addAnimationToSprite :: proc(
+    using sprite: ^Sprite, 
     animationSourceOffset: rl.Vector2, frames, fps, framePeriod: int, linger: f32,
     tag: string
 ) {
-
+    using sprite.animationControl
     animations[tag] = init_SpriteAnimation(animationSourceOffset, frames, fps, framePeriod, linger, tag)
     currentAnimation = &animations[tag]
     if !active do active = true
 }
 
 
-ChangeSpriteAnimation :: proc(using control: ^AnimationControl, tag: string) {
+ChangeSpriteAnimation :: proc(using sprite: ^Sprite, tag: string) {
+    using sprite.animationControl
     currentAnimation = &animations[tag]
     curFrame = 0
     curTime = 0.0
