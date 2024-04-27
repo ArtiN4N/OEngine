@@ -11,9 +11,7 @@ main :: proc() {
     defer rl.CloseWindow()
 
     state := init_State()
-
-    setUpState(&state)
-    defer cleanUpState(&state)
+    defer destroy_State(&state)
 
     rl.SetTargetFPS(60)
 
@@ -23,7 +21,7 @@ main :: proc() {
 
         checkInput(&state.inputHandler, &state)
 
-        SpriteAnimationUpdate(&state.testSprite.animationController, state.dt, &state.outLog)
+        update_SpriteHandler(&state.spriteHandler, state.dt)
         updateAudioHandler(&state.audioHandler, state.dt)
 
         draw(state)
