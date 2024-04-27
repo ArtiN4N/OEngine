@@ -36,12 +36,12 @@ init_SpriteAnimation :: proc(
 
 AnimationControl :: struct {
     active: bool,
-
+    
     animations: map[string]SpriteAnimation,
     currentAnimation: ^SpriteAnimation,
 
-    curFrame: int,
-    curTime: f32,
+    currentFrame: int,
+    currentTime: f32,
 }
 
 init_AnimationControl :: proc(tag: string, log: ^OutLog) -> AnimationControl {
@@ -65,48 +65,50 @@ addAnimationToSprite :: proc(
     tag: string
 ) {
     using sprite.animationControl
+
     animations[tag] = init_SpriteAnimation(animationSourceOffset, frames, fps, framePeriod, linger, tag)
     currentAnimation = &animations[tag]
+
+    // first added animation should activate the andimation controller
     if !active do active = true
 }
 
 
 ChangeSpriteAnimation :: proc(using sprite: ^Sprite, tag: string) {
     using sprite.animationControl
+
+    // change the current animation, and reset the frame number and counter
     currentAnimation = &animations[tag]
-    curFrame = 0
-    curTime = 0.0
+    currentFrame = 0
+    currentTime = 0.0
 }
 
 update_AnimationControl :: proc(using control: ^AnimationControl, dt: f32) {
     if !active do return
 
-    curTime += dt
+    currentTime += dt
 
     // If we're on the last frame, override the frame per second calculation in favor of a linger frame
     // Each animation has a linger value that specifies how long the last frame will linger for.
-    if curFrame == currentAnimation.frames - 1 {
+    if currentFrame == currentAnimation.frames - 1 {
         // A value of -1.0 (less than 0) will cause the last frame to linger forever
-        if currentAnimation.linger < 0.0 {
-            return
+        if currentAnimation.linger < 0.0 do return
+            
         // Otherwise, count down until the linger is over, and reset the animtion
-        } else if currentAnimation.linger > 0.0 {
-            if curTime >= currentAnimation.linger {
-                curFrame = 0
-                curTime = 0.0
-            }
-
+        else if currentTime >= currentAnimation.linger  {
+            currentFrame = 0
+            currentTime = 0.0
             return
         }
     }
 
     // one over frames per second is seconds per frame, which we use to count to when a frame should be updated
-    if curTime >= 1.0 / auto_cast currentAnimation.fps {
-        curTime = 0.0
-        curFrame += 1
+    if currentTime >= 1.0 / auto_cast currentAnimation.fps {
+        currentTime = 0.0
+        currentFrame += 1
 
-        if curFrame >= currentAnimation.frames {
-            curFrame = 0
-        }
+        // cycle from last frame to first frame (automatic looping)
+        // you can use a linger value of -1 to disable looping
+        if currentFrame >= currentAnimation.frames do currentFrame = 0
     }
 }

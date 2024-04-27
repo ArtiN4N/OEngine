@@ -4,8 +4,7 @@ import "core:strings"
 
 import rl "vendor:raylib"
 
-// Sprite init functions
-//-----------------------------------------------------------------------------------------------
+
 Sprite :: struct {
     animationControl: AnimationControl,
 
@@ -29,16 +28,9 @@ init_Sprite :: proc(
 }
 
 destroy_Sprite :: proc(using sprite: ^Sprite, tag: string, log: ^OutLog) {
-    if animationControl.active {
-        destroy_AnimationControl(&animationControl, tag, log)
-    }
+    if animationControl.active do destroy_AnimationControl(&animationControl, tag, log)
 }
-//-----------------------------------------------------------------------------------------------
 
-
-
-// Sprite drawing and util functions
-//-----------------------------------------------------------------------------------------------
 getFrameSourcePosition :: proc(using sprite: Sprite) -> (f32, f32) {
     // The source position is where in the parent's sprite sheet the current frame to draw resides
     x := textureSourceOffset.x
@@ -77,4 +69,3 @@ draw_Sprite :: proc(using sprite: Sprite, rotation: f32) {
         rl.RAYWHITE
     )
 }
-//-----------------------------------------------------------------------------------------------
