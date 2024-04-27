@@ -92,14 +92,13 @@ update_AnimationControl :: proc(using control: ^AnimationControl, dt: f32) {
     // Each animation has a linger value that specifies how long the last frame will linger for.
     if currentFrame == currentAnimation.frames - 1 {
         // A value of -1.0 (less than 0) will cause the last frame to linger forever
-        if currentAnimation.linger < 0.0 do return
-            
         // Otherwise, count down until the linger is over, and reset the animtion
-        else if currentTime >= currentAnimation.linger  {
+        if currentAnimation.linger >= 0.0 && currentTime >= currentAnimation.linger  {
             currentFrame = 0
             currentTime = 0.0
-            return
         }
+
+        return
     }
 
     // one over frames per second is seconds per frame, which we use to count to when a frame should be updated
