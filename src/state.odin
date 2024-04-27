@@ -16,16 +16,23 @@ State :: struct {
 }
 
 init_State :: proc() -> State {
+    log := init_OutLog()
+    aHandler := init_AudioHandler(&log)
+    iHandler := init_InputHandler(&log)
+    sHandler := init_SpriteHandler(&log)
+
     state: State = {
-        init_OutLog(), init_AudioHandler(), init_InputHandler(), init_SpriteHandler(),
+        log, aHandler, iHandler, sHandler,
         rl.Vector2{0, 0},
         0.0,
     }
 
     writeFrameHeader(&state.outLog, "LOAD")
+
     setStateWindow(&state, 400, 400, "OEngine Test")
 
-    loadTextureToState(&state, "resources/img/exception.png", "exception")
+    loadTextureToState(&state, "resources/img/exception.png", getStateTextureExceptionTag())
+    loadSoundToState(&state, "resources/sound/exception.png", getStateSoundExceptionTag())
 
     return state
 }
@@ -33,12 +40,11 @@ init_State :: proc() -> State {
 destroy_State :: proc(using state: ^State) {
     writeFrameHeader(&outLog, "UNLOAD")
 
-    destroy_SpriteHandler(&spriteHandler, &state.outLog)
+    destroy_SpriteHandler(&spriteHandler, &outLog)
 
-    destroy_InputHandler(&inputHandler, &state.outLog)
+    destroy_InputHandler(&inputHandler, &outLog)
 
-    // AUDIO
-    cleanUpAudioHandler(&audioHandler, &outLog)
+    destroy_AudioHandler(&audioHandler, &outLog)
 
     writeLogToFile(&outLog)
 }
@@ -75,4 +81,12 @@ loadMusicToState :: proc(using state: ^State, filename: cstring, tag: string) {
 
 setStateDT :: proc(using state: ^State) {
     dt = rl.GetFrameTime()
+}
+
+getStateTextureExceptionTag :: proc() -> string {
+    return "exceptionTexture"
+}
+
+getStateSoundExceptionTag :: proc() -> string {
+    return "exceptionSound"
 }
