@@ -41,6 +41,7 @@ addInputCallbackOnKey :: proc(using handler: ^InputHandler, key: rl.KeyboardKey,
     keyCallbacks[tag] = callback
 }
 
+// change a registered callback on key
 changeTaggedKey :: proc(using handler: ^InputHandler, key: rl.KeyboardKey, tag: string, callback: inputCallback) {
     delete_key(&keyEvents, tag)
     delete_key(&keyCallbacks, tag)
@@ -64,6 +65,7 @@ checkInput :: proc(using handler: ^InputHandler, state: ^State) {
         return
     }
 
+    // trigger relevant callbacks
     for tag, key in keyEvents {
         if rl.IsKeyDown(key) do keyCallbacks[tag](state, key, tag)
     }
