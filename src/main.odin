@@ -25,6 +25,8 @@ main :: proc() {
 
     ChangeSpriteAnimation(&state.spriteHandler.spriteAliases[newSprite], "idle")
 
+    writeFrameHeader(&state.outLog, "GAME")
+
     for !rl.WindowShouldClose() {
         setStateDT(&state)
         stepOutLog(&state.outLog, state.dt)

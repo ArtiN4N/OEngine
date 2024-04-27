@@ -27,8 +27,6 @@ init_State :: proc() -> State {
 
     loadTextureToState(&state, "resources/img/exception.png", "exception")
 
-    writeFrameHeader(&state.outLog, "GAME")
-
     return state
 }
 
