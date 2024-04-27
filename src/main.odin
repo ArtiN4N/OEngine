@@ -6,7 +6,6 @@ import "core:strings"
 import rl "vendor:raylib"
 
 main :: proc() {
-
     rl.InitWindow(1, 1, "")
     defer rl.CloseWindow()
 
@@ -34,7 +33,7 @@ main :: proc() {
         checkInput(&state.inputHandler, &state)
 
         update_SpriteHandler(&state.spriteHandler, state.dt)
-        updateAudioHandler(&state.audioHandler, state.dt)
+        update_AudioHandler(&state.audioHandler, state.dt)
 
         draw(state)
     }
