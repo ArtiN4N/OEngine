@@ -8,35 +8,43 @@ import rl "vendor:raylib"
 
 loads: i32 = 0
 frees: i32 = 0
-elapsed: f32 = 0.0
+elapsed: f64 = 0.0
+builder := strings.builder_make()
 
-writeToLog :: proc(data: cstring) {
-    rl.SaveFileText("log.txt", transmute([^]u8) data)
+finalizeLog :: proc() {
+    rl.SaveFileText("log.txt", raw_data(strings.to_string(builder)))
 }
 
-stepLog :: proc(dt: f32) {
-    elapsed += dt
+writeToLog :: proc(data: cstring) {
+    stepLog()
+    fmt.sbprintf(&builder, "%s -- logged at time %.2f\n", data, elapsed)
+}
+
+stepLog :: proc() {
+    elapsed = rl.GetTime()
 }
 
 writeFrameHeader :: proc(title: string) {
-    writeToLog(fmt.caprintf("\n----------%s FRAME----------\n", title))
+    fmt.sbprintf(&builder, "\n----------%s FRAME----------\n", title)
 }
 
 writeEnterFrame :: proc() {
     curTime := time.now()
     hour, min, sec := time.clock_from_time(curTime)
 
-    writeToLog(fmt.caprintf(
+    fmt.sbprintf(
+        &builder, 
         "----------INIT FRAME----------\nExecuted at time %4d:%2d:%2d - %2d:%2d:%2d\n", 
-        time.date(curTime), (hour - 7) % 24, min, sec
-    ))
+        time.date(curTime), (hour + 24 - 7) % 24, min, sec
+    )
 }
 
 writeExitFrame :: proc() {
-    writeToLog(fmt.caprintf(
+    fmt.sbprintf(
+        &builder, 
         "\n----------EXIT FRAME----------\nTOTAL LOADS: %3d\nTOTAL FREES: %3d\nLOADS == FREES: %t",
         loads, frees, loads == frees
-    ))
+    )
 }
 
 writeTextureLoadToLog :: proc(tag: string, success: bool) {
