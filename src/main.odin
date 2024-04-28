@@ -21,7 +21,6 @@ main :: proc() {
         spriteSize = rl.Vector2{16, 16}, 
         textureSourceOffset = rl.Vector2{0, 0}, textureDestOffset = rl.Vector2{0, 0}, 
         tag = "frogsheet",
-        log = &state.outLog,
     )
     
     addAnimationToSprite(
@@ -45,11 +44,11 @@ main :: proc() {
 
     ChangeSpriteAnimation(&state.spriteHandler.spriteAliases[newSprite], tag = "idle")
 
-    writeFrameHeader(&state.outLog, "GAME")
+    writeFrameHeader("GAME")
 
     for !rl.WindowShouldClose() {
         setStateDT(&state)
-        stepOutLog(&state.outLog, state.dt)
+        stepLog(state.dt)
 
         checkInput(&state.inputHandler, &state)
 

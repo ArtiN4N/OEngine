@@ -29,13 +29,13 @@ AudioHandler :: struct {
     dynamicMusicControl: DynamicAudioControl
 }
 
-init_AudioHandler :: proc(log: ^OutLog) -> AudioHandler {
+init_AudioHandler :: proc() -> AudioHandler {
     rl.InitAudioDevice()
     rl.SetMasterVolume(1.0)
 
-    writeAllocToLog(log, varname = "audioHandler.masterSounds")
-    writeAllocToLog(log, varname = "spriteHandler.soundAliases")
-    writeAllocToLog(log, varname = "spriteHandler.masterMusic")
+    writeAllocToLog(varname = "audioHandler.masterSounds")
+    writeAllocToLog(varname = "spriteHandler.soundAliases")
+    writeAllocToLog(varname = "spriteHandler.masterMusic")
 
     return {
         make(map[string]rl.Sound),
@@ -47,26 +47,26 @@ init_AudioHandler :: proc(log: ^OutLog) -> AudioHandler {
     }
 }
 
-destroy_AudioHandler :: proc(using handler: ^AudioHandler, log: ^OutLog) {
+destroy_AudioHandler :: proc(using handler: ^AudioHandler) {
     for tag, &alias in soundAliases {
-        if alias.active do destroy_SoundAlias(&alias, tag, log)
+        if alias.active do destroy_SoundAlias(&alias, tag)
     }
     delete(soundAliases)
-    writeAllocFreeToLog(log, varname = "spriteHandler.soundAliases")
+    writeAllocFreeToLog(varname = "spriteHandler.soundAliases")
 
     for tag, sound in masterSounds {
         rl.UnloadSound(sound)
-        writeDataFreeToLog(log, tag)
+        writeDataFreeToLog(tag)
     }
     delete(masterSounds)
-    writeAllocFreeToLog(log, varname = "spriteHandler.masterSounds")
+    writeAllocFreeToLog(varname = "spriteHandler.masterSounds")
 
     for tag, music in masterMusic {
         rl.UnloadMusicStream(music)
-        writeDataFreeToLog(log, tag)
+        writeDataFreeToLog(tag)
     }
     delete(masterMusic)
-    writeAllocFreeToLog(log, varname = "spriteHandler.masterMusic")
+    writeAllocFreeToLog(varname = "spriteHandler.masterMusic")
 
     rl.CloseAudioDevice()
 }

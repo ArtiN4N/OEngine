@@ -16,21 +16,20 @@ Sprite :: struct {
 }
 
 init_Sprite :: proc(
-    log: ^OutLog,
     tag: string, 
     spriteSize: rl.Vector2,
     texture: ^rl.Texture2D, 
     textureSourceOffset: rl.Vector2 = {0, 0}, textureDestOffset: rl.Vector2 = {0, 0},
 ) -> Sprite {
     return {
-        init_AnimationControl(tag, log),
+        init_AnimationControl(tag),
         spriteSize,
         texture, textureSourceOffset, textureDestOffset,
     }
 }
 
-destroy_Sprite :: proc(using sprite: ^Sprite, log: ^OutLog, tag: string) {
-    if animationControl.active do destroy_AnimationControl(&animationControl, tag, log)
+destroy_Sprite :: proc(using sprite: ^Sprite, tag: string) {
+    if animationControl.active do destroy_AnimationControl(&animationControl, tag)
 }
 
 getFrameSourcePosition :: proc(using sprite: Sprite) -> (f32, f32) {

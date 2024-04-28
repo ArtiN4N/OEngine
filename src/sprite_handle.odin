@@ -17,9 +17,9 @@ SpriteHandler :: struct {
     generationCounter: int,
 }
 
-init_SpriteHandler :: proc(log: ^OutLog) -> SpriteHandler {
-    writeAllocToLog(log, varname = "spriteHandler.masterSprites")
-    writeAllocToLog(log, varname = "spriteHandler.spriteAliases")
+init_SpriteHandler :: proc() -> SpriteHandler {
+    writeAllocToLog(varname = "spriteHandler.masterSprites")
+    writeAllocToLog(varname = "spriteHandler.spriteAliases")
 
     return {
         make(map[string]rl.Texture2D),
@@ -28,18 +28,18 @@ init_SpriteHandler :: proc(log: ^OutLog) -> SpriteHandler {
     }
 }
 
-destroy_SpriteHandler :: proc(using handler: ^SpriteHandler, log: ^OutLog) {
-    for tag, &sprite in spriteAliases do destroy_Sprite(&sprite, log, tag)
+destroy_SpriteHandler :: proc(using handler: ^SpriteHandler) {
+    for tag, &sprite in spriteAliases do destroy_Sprite(&sprite, tag)
 
     delete(spriteAliases)
-    writeAllocFreeToLog(log, varname = "spriteHandler.spriteAliases")
+    writeAllocFreeToLog(varname = "spriteHandler.spriteAliases")
 
     for tag, texture in masterSprites {
         rl.UnloadTexture(texture)
-        writeDataFreeToLog(log, tag)
+        writeDataFreeToLog(tag)
     }
     delete(masterSprites)
-    writeAllocFreeToLog(log, varname = "spriteHandler.masterSprites")
+    writeAllocFreeToLog(varname = "spriteHandler.masterSprites")
 }
 
 update_SpriteHandler :: proc(using handler: ^SpriteHandler, dt: f32) {
@@ -52,10 +52,10 @@ update_SpriteHandler :: proc(using handler: ^SpriteHandler, dt: f32) {
 // textureDestOffset is the position on the screen that the sprite is shifted to
 // tag is used to identify the original texture data being referenced
 createNewSpriteAlias :: proc(
-    using handler: ^SpriteHandler, 
+    using handler: ^SpriteHandler,
+    tag: string,
     spriteSize: rl.Vector2,
     textureSourceOffset: rl.Vector2, textureDestOffset: rl.Vector2,
-    tag: string, log: ^OutLog
 ) -> string {
 
     tag := tag
@@ -67,10 +67,10 @@ createNewSpriteAlias :: proc(
         // this will cause the new sprite alias to reference the exception texture that is pre-loaded
         tag = getStateTextureExceptionTag()
 
-        writeToLog(log, fmt.tprintf("ERROR - Tried referencing texture data from invalid tag '%s'", tag))
+        writeToLog(fmt.caprintf("ERROR - Tried referencing texture data from invalid tag '%s'", tag))
     }
 
-    alias := init_Sprite(log, tag, spriteSize, &masterSprites[tag], textureSourceOffset, textureDestOffset)
+    alias := init_Sprite(tag, spriteSize, &masterSprites[tag], textureSourceOffset, textureDestOffset)
 
     fmt.sbprintf(&tagBuilder, "%s%d", tag, generationCounter)
     generationCounter += 1

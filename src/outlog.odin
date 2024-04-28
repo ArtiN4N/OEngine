@@ -8,14 +8,14 @@ import rl "vendor:raylib"
 
 loads: i32 = 0
 frees: i32 = 0
-time: f32 = 0.0
+elapsed: f32 = 0.0
 
 writeToLog :: proc(data: cstring) {
-    rl.SaveFileText("log.txt", data)
+    rl.SaveFileText("log.txt", transmute([^]u8) data)
 }
 
 stepLog :: proc(dt: f32) {
-    time += dt
+    elapsed += dt
 }
 
 writeFrameHeader :: proc(title: string) {
@@ -39,7 +39,7 @@ writeExitFrame :: proc() {
     ))
 }
 
-writeTextureLoadToLog :: proc(using out: ^OutLog, tag: string, success: bool) {
+writeTextureLoadToLog :: proc(tag: string, success: bool) {
     if !success {
         writeToLog(fmt.caprintf("ERROR - Failed to load texture data from '%s'", tag))
         return
@@ -53,12 +53,12 @@ writeAudioLoadToLog :: proc(tag: string, success: bool) {
         writeToLog(fmt.caprintf("ERROR - Failed to load audio data from '%s'", tag))
         return
     }
-    writeToLog(out, fmt.caprintf("Loaded audio data from tag '%s'", tag))
+    writeToLog(fmt.caprintf("Loaded audio data from tag '%s'", tag))
     loads += 1
 }
 
 writeFileLoadToLog :: proc(tag: string) {
-    writeToLog(out, fmt.caprintf("Loaded file data from tag '%s'", tag))
+    writeToLog(fmt.caprintf("Loaded file data from tag '%s'", tag))
     loads += 1
 }
 

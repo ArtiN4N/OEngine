@@ -5,7 +5,6 @@ import "core:fmt"
 import rl "vendor:raylib"
 
 State :: struct {
-    outLog: OutLog,
     audioHandler: AudioHandler,
     inputHandler: InputHandler,
     spriteHandler: SpriteHandler,
@@ -16,16 +15,14 @@ State :: struct {
 }
 
 init_State :: proc(windowWidth: i32 = 400, windowHeight: i32 = 400, windowTitle: cstring = "test") -> State {
-    log := init_OutLog()
+    writeFrameHeader("LOAD")
 
-    writeFrameHeader(&log, "LOAD")
-
-    aHandler := init_AudioHandler(&log)
-    iHandler := init_InputHandler(&log)
-    sHandler := init_SpriteHandler(&log)
+    aHandler := init_AudioHandler()
+    iHandler := init_InputHandler()
+    sHandler := init_SpriteHandler()
 
     state: State = {
-        log, aHandler, iHandler, sHandler,
+        aHandler, iHandler, sHandler,
         rl.Vector2{auto_cast windowWidth, auto_cast windowHeight},
         0.0,
     }
@@ -39,15 +36,13 @@ init_State :: proc(windowWidth: i32 = 400, windowHeight: i32 = 400, windowTitle:
 }
 
 destroy_State :: proc(using state: ^State) {
-    writeFrameHeader(&outLog, "UNLOAD")
+    writeFrameHeader("UNLOAD")
 
-    destroy_SpriteHandler(&spriteHandler, &outLog)
+    destroy_SpriteHandler(&spriteHandler)
 
-    destroy_InputHandler(&inputHandler, &outLog)
+    destroy_InputHandler(&inputHandler)
 
-    destroy_AudioHandler(&audioHandler, &outLog)
-
-    writeLogToFile(&outLog)
+    destroy_AudioHandler(&audioHandler)
 }
 
 setStateWindow :: proc(using state: ^State, width, height: i32, title: cstring) {
@@ -55,27 +50,27 @@ setStateWindow :: proc(using state: ^State, width, height: i32, title: cstring) 
     rl.SetWindowSize(width, height)
     rl.SetWindowTitle(title)
 
-    writeToLog(&outLog, fmt.tprintf("Set window size to (%d, %d)", width, height))
-    writeToLog(&outLog, fmt.tprintf("Set window title to '%s'", title))
+    writeToLog(fmt.caprintf("Set window size to (%d, %d)", width, height))
+    writeToLog(fmt.caprintf("Set window title to '%s'", title))
 }
 
 loadTextureToState :: proc(using state: ^State, filename: cstring, tag: string) {
     texture := rl.LoadTexture(filename)
-    writeTextureLoadToLog(&outLog, tag, rl.IsTextureReady(texture))
+    writeTextureLoadToLog(tag, rl.IsTextureReady(texture))
 
     spriteHandler.masterSprites[tag] = texture
 }
 
 loadSoundToState :: proc(using state: ^State, filename: cstring, tag: string) {
     sound := rl.LoadSound(filename)
-    writeAudioLoadToLog(&outLog, tag, rl.IsSoundReady(sound))
+    writeAudioLoadToLog(tag, rl.IsSoundReady(sound))
 
     audioHandler.masterSounds[tag] = sound
 }
 
 loadMusicToState :: proc(using state: ^State, filename: cstring, tag: string) {
     music := rl.LoadMusicStream(filename)
-    writeAudioLoadToLog(&outLog, tag, rl.IsMusicReady(music))
+    writeAudioLoadToLog(tag, rl.IsMusicReady(music))
 
     audioHandler.masterMusic[tag] = music
 }

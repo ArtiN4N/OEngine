@@ -27,13 +27,13 @@ init_SoundAlias :: proc(sound: ^rl.Sound, generation: ^int) -> SoundAlias {
     }
 }
 
-destroy_SoundAlias :: proc(using soundAlias: ^SoundAlias, tag: string,  log: ^OutLog) {
+destroy_SoundAlias :: proc(using soundAlias: ^SoundAlias, tag: string) {
     rl.UnloadSoundAlias(alias)
-    writeAllocFreeToLog(log, tag)
+    writeAllocFreeToLog(tag)
     active = false
 }
 
-createNewSoundAlias :: proc(using handler: ^AudioHandler, tag: string, log: ^OutLog) -> string {
+createNewSoundAlias :: proc(using handler: ^AudioHandler, tag: string) -> string {
 
     tag := tag
 
@@ -44,7 +44,7 @@ createNewSoundAlias :: proc(using handler: ^AudioHandler, tag: string, log: ^Out
         // this will cause the new sound alias to reference the exception sound that is pre-loaded
         tag = getStateSoundExceptionTag()
 
-        writeToLog(log, fmt.tprintf("ERROR - Tried referencing sound data from invalid tag '%s'", tag))
+        writeToLog(fmt.caprintf("ERROR - Tried referencing sound data from invalid tag '%s'", tag))
     }
 
     alias := init_SoundAlias(&masterSounds[tag], &generationCounter)

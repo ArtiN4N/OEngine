@@ -17,9 +17,9 @@ InputHandler :: struct {
     typingText: strings.Builder,
 }
 
-init_InputHandler :: proc(log: ^OutLog) -> InputHandler {
-    writeAllocToLog(log, varname = "inputHandler.keyEvents")
-    writeAllocToLog(log, varname = "inputHandler.keyCallbacks")
+init_InputHandler :: proc() -> InputHandler {
+    writeAllocToLog(varname = "inputHandler.keyEvents")
+    writeAllocToLog(varname = "inputHandler.keyCallbacks")
 
     return {
         make(map[string]rl.KeyboardKey),
@@ -30,25 +30,25 @@ init_InputHandler :: proc(log: ^OutLog) -> InputHandler {
     }
 }
 
-destroy_InputHandler :: proc(using handler: ^InputHandler, log: ^OutLog) {
+destroy_InputHandler :: proc(using handler: ^InputHandler) {
     delete(keyEvents)
-    writeAllocFreeToLog(log, varname = "inputHandler.keyEvents")
+    writeAllocFreeToLog(varname = "inputHandler.keyEvents")
 
     delete(keyCallbacks)
-    writeAllocFreeToLog(log, varname = "inputHandler.keyCallbacks")
+    writeAllocFreeToLog(varname = "inputHandler.keyCallbacks")
 }
 
-addInputCallbackOnKey :: proc(using handler: ^InputHandler, key: rl.KeyboardKey, tag: string, callback: inputCallback) {
+addInputCallbackOnKey :: proc(using handler: ^InputHandler, tag: string, key: rl.KeyboardKey, callback: inputCallback) {
     keyEvents[tag] = key
     keyCallbacks[tag] = callback
 }
 
 // change a registered callback on key
-changeTaggedKey :: proc(using handler: ^InputHandler, key: rl.KeyboardKey, tag: string, callback: inputCallback) {
+changeTaggedKey :: proc(using handler: ^InputHandler, tag: string, key: rl.KeyboardKey, callback: inputCallback) {
     delete_key(&keyEvents, tag)
     delete_key(&keyCallbacks, tag)
 
-    addInputCallbackOnKey(handler, key, tag, callback)
+    addInputCallbackOnKey(handler, tag, key, callback)
 }
 
 checkInput :: proc(using handler: ^InputHandler, state: ^State) {

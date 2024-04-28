@@ -7,6 +7,8 @@ import rl "vendor:raylib"
 
 
 SpriteAnimation :: struct {
+    // Identifying tag used to set current animation
+    tag: string,
     // Where the first frame of the current animation is located in its parent's spritesheet
     animationSourceOffset: rl.Vector2,
     frames: int,
@@ -16,20 +18,18 @@ SpriteAnimation :: struct {
     framePeriod: int,
     // Describes how long the last frame lingers for. Set to -1.0 for forever.
     linger: f32,
-    // Identifying tag used to set current animation
-    tag: string,
 }
 
 // Function to create sprite animations
 init_SpriteAnimation :: proc(
+    tag: string,
     animationSourceOffset: rl.Vector2, 
     frames: int, fps, framePeriod: int, linger: f32, 
-    tag: string
 ) -> SpriteAnimation {
     return {
+        tag,
         animationSourceOffset, 
         frames, fps, framePeriod, linger, 
-        tag,
     }
 }
 
@@ -44,8 +44,8 @@ AnimationControl :: struct {
     currentTime: f32,
 }
 
-init_AnimationControl :: proc(tag: string, log: ^OutLog) -> AnimationControl {
-    writeAllocToLog(log, tag)
+init_AnimationControl :: proc(tag: string) -> AnimationControl {
+    writeAllocToLog(tag)
 
     return {
         false,
@@ -54,19 +54,20 @@ init_AnimationControl :: proc(tag: string, log: ^OutLog) -> AnimationControl {
     }
 }
 
-destroy_AnimationControl :: proc(using control: ^AnimationControl, tag: string, log: ^OutLog) {
-    writeAllocFreeToLog(log, tag)
+destroy_AnimationControl :: proc(using control: ^AnimationControl, tag: string) {
+    writeAllocFreeToLog(tag)
     delete(animations)
 }
 
 addAnimationToSprite :: proc(
-    using sprite: ^Sprite, 
-    animationSourceOffset: rl.Vector2, frames, fps, framePeriod: int, linger: f32,
-    tag: string
+    using sprite: ^Sprite,
+    tag: string,
+    animationSourceOffset: rl.Vector2, 
+    frames, fps, framePeriod: int, linger: f32,
 ) {
     using sprite.animationControl
 
-    animations[tag] = init_SpriteAnimation(animationSourceOffset, frames, fps, framePeriod, linger, tag)
+    animations[tag] = init_SpriteAnimation(tag, animationSourceOffset, frames, fps, framePeriod, linger)
     currentAnimation = &animations[tag]
 
     // first added animation should activate the andimation controller
