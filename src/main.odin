@@ -48,7 +48,6 @@ main :: proc() {
 
     for !rl.WindowShouldClose() {
         setStateDT(&state)
-        stepLog(state.dt)
 
         checkInput(&state.inputHandler, &state)
 
