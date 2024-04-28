@@ -15,7 +15,7 @@ State :: struct {
     dt: f32,
 }
 
-init_State :: proc() -> State {
+init_State :: proc(windowWidth: i32 = 400, windowHeight: i32 = 400, windowTitle: cstring = "test") -> State {
     log := init_OutLog()
 
     writeFrameHeader(&log, "LOAD")
@@ -26,11 +26,11 @@ init_State :: proc() -> State {
 
     state: State = {
         log, aHandler, iHandler, sHandler,
-        rl.Vector2{0, 0},
+        rl.Vector2{auto_cast windowWidth, auto_cast windowHeight},
         0.0,
     }
 
-    setStateWindow(&state, width = 400, height = 400, title = "OEngine Init")
+    setStateWindow(&state, width = windowWidth, height = windowHeight, title = windowTitle)
 
     loadTextureToState(&state, filename = "resources/img/exception.png", tag = getStateTextureExceptionTag())
     loadSoundToState(&state, filename = "resources/sound/exception.wav", tag = getStateSoundExceptionTag())

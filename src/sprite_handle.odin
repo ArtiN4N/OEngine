@@ -29,7 +29,7 @@ init_SpriteHandler :: proc(log: ^OutLog) -> SpriteHandler {
 }
 
 destroy_SpriteHandler :: proc(using handler: ^SpriteHandler, log: ^OutLog) {
-    for tag, &sprite in spriteAliases do destroy_Sprite(&sprite, tag, log)
+    for tag, &sprite in spriteAliases do destroy_Sprite(&sprite, log, tag)
 
     delete(spriteAliases)
     writeAllocFreeToLog(log, varname = "spriteHandler.spriteAliases")
@@ -70,7 +70,7 @@ createNewSpriteAlias :: proc(
         writeToLog(log, fmt.tprintf("ERROR - Tried referencing texture data from invalid tag '%s'", tag))
     }
 
-    alias := init_Sprite(spriteSize, &masterSprites[tag], textureSourceOffset, textureDestOffset, tag, log)
+    alias := init_Sprite(log, tag, spriteSize, &masterSprites[tag], textureSourceOffset, textureDestOffset)
 
     fmt.sbprintf(&tagBuilder, "%s%d", tag, generationCounter)
     generationCounter += 1

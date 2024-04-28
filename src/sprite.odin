@@ -16,9 +16,11 @@ Sprite :: struct {
 }
 
 init_Sprite :: proc(
+    log: ^OutLog,
+    tag: string, 
     spriteSize: rl.Vector2,
-    texture: ^rl.Texture2D, textureSourceOffset: rl.Vector2, textureDestOffset: rl.Vector2,
-    tag: string, log: ^OutLog,
+    texture: ^rl.Texture2D, 
+    textureSourceOffset: rl.Vector2 = {0, 0}, textureDestOffset: rl.Vector2 = {0, 0},
 ) -> Sprite {
     return {
         init_AnimationControl(tag, log),
@@ -27,7 +29,7 @@ init_Sprite :: proc(
     }
 }
 
-destroy_Sprite :: proc(using sprite: ^Sprite, tag: string, log: ^OutLog) {
+destroy_Sprite :: proc(using sprite: ^Sprite, log: ^OutLog, tag: string) {
     if animationControl.active do destroy_AnimationControl(&animationControl, tag, log)
 }
 
@@ -59,12 +61,16 @@ getSpriteSourceRec :: proc(using sprite: Sprite) -> rl.Rectangle {
     }
 }
 
-draw_Sprite :: proc(using sprite: Sprite, rotation: f32) {
+draw_Sprite :: proc(
+    using sprite: Sprite, 
+    position: rl.Vector2 = {0, 0}, size: rl.Vector2 = {100, 100}, 
+    rotation: f32 = 0.0,
+) {
     rl.DrawTexturePro(
         texture^,
         getSpriteSourceRec(sprite),
         // temporary - should be drawing at position/size provided by user/code
-        rl.Rectangle{100, 100, 256, 256}, 
+        rl.Rectangle{position.x, position.y, size.x, size.y}, 
         textureDestOffset,
         rotation,
         rl.RAYWHITE
