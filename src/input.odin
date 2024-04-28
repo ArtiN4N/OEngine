@@ -18,8 +18,8 @@ InputHandler :: struct {
 }
 
 init_InputHandler :: proc(log: ^OutLog) -> InputHandler {
-    writeAllocToLog(log, "inputHandler.keyEvents")
-    writeAllocToLog(log, "inputHandler.keyCallbacks")
+    writeAllocToLog(log, varname = "inputHandler.keyEvents")
+    writeAllocToLog(log, varname = "inputHandler.keyCallbacks")
 
     return {
         make(map[string]rl.KeyboardKey),
@@ -32,10 +32,10 @@ init_InputHandler :: proc(log: ^OutLog) -> InputHandler {
 
 destroy_InputHandler :: proc(using handler: ^InputHandler, log: ^OutLog) {
     delete(keyEvents)
-    writeAllocFreeToLog(log, "inputHandler.keyEvents")
+    writeAllocFreeToLog(log, varname = "inputHandler.keyEvents")
 
     delete(keyCallbacks)
-    writeAllocFreeToLog(log, "inputHandler.keyCallbacks")
+    writeAllocFreeToLog(log, varname = "inputHandler.keyCallbacks")
 }
 
 addInputCallbackOnKey :: proc(using handler: ^InputHandler, key: rl.KeyboardKey, tag: string, callback: inputCallback) {

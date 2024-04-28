@@ -29,10 +29,10 @@ init_State :: proc() -> State {
 
     writeFrameHeader(&state.outLog, "LOAD")
 
-    setStateWindow(&state, 400, 400, "OEngine Test")
+    setStateWindow(&state, width = 400, height = 400, title = "OEngine Init")
 
-    loadTextureToState(&state, "resources/img/exception.png", getStateTextureExceptionTag())
-    loadSoundToState(&state, "resources/sound/exception.png", getStateSoundExceptionTag())
+    loadTextureToState(&state, filename = "resources/img/exception.png", tag = getStateTextureExceptionTag())
+    loadSoundToState(&state, filename = "resources/sound/exception.png", tag = getStateSoundExceptionTag())
 
     return state
 }

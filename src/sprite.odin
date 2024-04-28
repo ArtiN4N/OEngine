@@ -62,7 +62,8 @@ getSpriteSourceRec :: proc(using sprite: Sprite) -> rl.Rectangle {
 draw_Sprite :: proc(using sprite: Sprite, rotation: f32) {
     rl.DrawTexturePro(
         texture^,
-        getSpriteSourceRec(sprite), 
+        getSpriteSourceRec(sprite),
+        // temporary - should be drawing at position/size provided by user/code
         rl.Rectangle{100, 100, 256, 256}, 
         textureDestOffset,
         rotation,

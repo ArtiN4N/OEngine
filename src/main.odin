@@ -14,15 +14,36 @@ main :: proc() {
 
     rl.SetTargetFPS(60)
 
-    loadTextureToState(&state, "resources/img/frogsheet.png", "frogsheet")
+    loadTextureToState(&state, filename = "resources/img/frogsheet.png", tag = "frogsheet")
 
-    newSprite := createNewSpriteAlias(&state.spriteHandler, rl.Vector2{16, 16}, rl.Vector2{0, 0}, rl.Vector2{0, 0}, "frogsheet", &state.outLog)
+    newSprite := createNewSpriteAlias(
+        &state.spriteHandler, 
+        spriteSize = rl.Vector2{16, 16}, 
+        textureSourceOffset = rl.Vector2{0, 0}, textureDestOffset = rl.Vector2{0, 0}, 
+        tag = "frogsheet",
+        log = &state.outLog,
+    )
     
-    addAnimationToSprite(&state.spriteHandler.spriteAliases[newSprite], rl.Vector2{0, 0}, 2, 5, 2, 3.0, "idle")
-    addAnimationToSprite(&state.spriteHandler.spriteAliases[newSprite], rl.Vector2{32, 0}, 3, 3, 3, 0.0, "smoke")
-    addAnimationToSprite(&state.spriteHandler.spriteAliases[newSprite], rl.Vector2{0, 16}, 5, 5, 5, -1.0, "jump")
+    addAnimationToSprite(
+        &state.spriteHandler.spriteAliases[newSprite], 
+        animationSourceOffset = rl.Vector2{0, 0}, 
+        frames = 2, fps = 5, framePeriod = 2, linger = 3.0, 
+        tag = "idle"
+    )
+    addAnimationToSprite(
+        &state.spriteHandler.spriteAliases[newSprite], 
+        animationSourceOffset = rl.Vector2{32, 0}, 
+        frames = 3, fps = 3, framePeriod = 3, linger = 0.0, 
+        tag = "smoke"
+    )
+    addAnimationToSprite(
+        &state.spriteHandler.spriteAliases[newSprite], 
+        animationSourceOffset = rl.Vector2{0, 16}, 
+        frames = 5, fps = 5, framePeriod = 5, linger = -1.0, 
+        tag = "jump"
+    )
 
-    ChangeSpriteAnimation(&state.spriteHandler.spriteAliases[newSprite], "idle")
+    ChangeSpriteAnimation(&state.spriteHandler.spriteAliases[newSprite], tag = "idle")
 
     writeFrameHeader(&state.outLog, "GAME")
 
@@ -45,7 +66,7 @@ draw :: proc(state: State) {
 
     rl.ClearBackground(rl.RAYWHITE)
 
-    rl.DrawText(getInputTypedText(state.inputHandler), 50, 50, 50, rl.RED)
+    rl.DrawText(getInputTypedText(state.inputHandler), posX = 50, posY = 50, fontSize = 50, color = rl.RED)
 
     draw_SpriteHandler(state.spriteHandler)
 

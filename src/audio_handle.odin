@@ -33,9 +33,9 @@ init_AudioHandler :: proc(log: ^OutLog) -> AudioHandler {
     rl.InitAudioDevice()
     rl.SetMasterVolume(1.0)
 
-    writeAllocToLog(log, "audioHandler.masterSounds")
-    writeAllocToLog(log, "spriteHandler.soundAliases")
-    writeAllocToLog(log, "spriteHandler.masterMusic")
+    writeAllocToLog(log, varname = "audioHandler.masterSounds")
+    writeAllocToLog(log, varname = "spriteHandler.soundAliases")
+    writeAllocToLog(log, varname = "spriteHandler.masterMusic")
 
     return {
         make(map[string]rl.Sound),
@@ -52,21 +52,21 @@ destroy_AudioHandler :: proc(using handler: ^AudioHandler, log: ^OutLog) {
         if alias.active do destroy_SoundAlias(&alias, tag, log)
     }
     delete(soundAliases)
-    writeAllocFreeToLog(log, "spriteHandler.soundAliases")
+    writeAllocFreeToLog(log, varname = "spriteHandler.soundAliases")
 
     for tag, sound in masterSounds {
         rl.UnloadSound(sound)
         writeDataFreeToLog(log, tag)
     }
     delete(masterSounds)
-    writeAllocFreeToLog(log, "spriteHandler.masterSounds")
+    writeAllocFreeToLog(log, varname = "spriteHandler.masterSounds")
 
     for tag, music in masterMusic {
         rl.UnloadMusicStream(music)
         writeDataFreeToLog(log, tag)
     }
     delete(masterMusic)
-    writeAllocFreeToLog(log, "spriteHandler.masterMusic")
+    writeAllocFreeToLog(log, varname = "spriteHandler.masterMusic")
 
     rl.CloseAudioDevice()
 }

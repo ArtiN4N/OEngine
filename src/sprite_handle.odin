@@ -18,8 +18,8 @@ SpriteHandler :: struct {
 }
 
 init_SpriteHandler :: proc(log: ^OutLog) -> SpriteHandler {
-    writeAllocToLog(log, "spriteHandler.masterSprites")
-    writeAllocToLog(log, "spriteHandler.spriteAliases")
+    writeAllocToLog(log, varname = "spriteHandler.masterSprites")
+    writeAllocToLog(log, varname = "spriteHandler.spriteAliases")
 
     return {
         make(map[string]rl.Texture2D),
@@ -32,14 +32,14 @@ destroy_SpriteHandler :: proc(using handler: ^SpriteHandler, log: ^OutLog) {
     for tag, &sprite in spriteAliases do destroy_Sprite(&sprite, tag, log)
 
     delete(spriteAliases)
-    writeAllocFreeToLog(log, "spriteHandler.spriteAliases")
+    writeAllocFreeToLog(log, varname = "spriteHandler.spriteAliases")
 
     for tag, texture in masterSprites {
         rl.UnloadTexture(texture)
         writeDataFreeToLog(log, tag)
     }
     delete(masterSprites)
-    writeAllocFreeToLog(log, "spriteHandler.masterSprites")
+    writeAllocFreeToLog(log, varname = "spriteHandler.masterSprites")
 }
 
 update_SpriteHandler :: proc(using handler: ^SpriteHandler, dt: f32) {
