@@ -17,6 +17,9 @@ State :: struct {
 
 init_State :: proc() -> State {
     log := init_OutLog()
+
+    writeFrameHeader(&log, "LOAD")
+
     aHandler := init_AudioHandler(&log)
     iHandler := init_InputHandler(&log)
     sHandler := init_SpriteHandler(&log)
@@ -26,8 +29,6 @@ init_State :: proc() -> State {
         rl.Vector2{0, 0},
         0.0,
     }
-
-    writeFrameHeader(&state.outLog, "LOAD")
 
     setStateWindow(&state, width = 400, height = 400, title = "OEngine Init")
 
