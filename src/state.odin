@@ -15,6 +15,8 @@ State :: struct {
 }
 
 init_State :: proc(windowWidth: i32 = 400, windowHeight: i32 = 400, windowTitle: cstring = "test") -> State {
+    writeEnterFrame()
+    
     writeFrameHeader("LOAD")
 
     aHandler := init_AudioHandler()
@@ -43,11 +45,14 @@ destroy_State :: proc(using state: ^State) {
     destroy_InputHandler(&inputHandler)
 
     destroy_AudioHandler(&audioHandler)
+
+    finalizeLog()
 }
 
 setStateWindow :: proc(using state: ^State, width, height: i32, title: cstring) {
     windowSize = rl.Vector2{auto_cast width, auto_cast height}
     rl.SetWindowSize(width, height)
+
     rl.SetWindowTitle(title)
 
     writeToLog(fmt.caprintf("Set window size to (%d, %d)", width, height))

@@ -23,8 +23,8 @@ SpriteAnimation :: struct {
 // Function to create sprite animations
 init_SpriteAnimation :: proc(
     tag: string,
-    animationSourceOffset: rl.Vector2, 
-    frames: int, fps, framePeriod: int, linger: f32, 
+    animationSourceOffset: rl.Vector2,
+    frames: int, fps, framePeriod: int, linger: f32 = 0.0,
 ) -> SpriteAnimation {
     return {
         tag,
@@ -63,7 +63,7 @@ addAnimationToSprite :: proc(
     using sprite: ^Sprite,
     tag: string,
     animationSourceOffset: rl.Vector2, 
-    frames, fps, framePeriod: int, linger: f32,
+    frames, fps, framePeriod: int, linger: f32 = 0.0,
 ) {
     using sprite.animationControl
 

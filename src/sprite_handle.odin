@@ -55,7 +55,7 @@ createNewSpriteAlias :: proc(
     using handler: ^SpriteHandler,
     tag: string,
     spriteSize: rl.Vector2,
-    textureSourceOffset: rl.Vector2, textureDestOffset: rl.Vector2,
+    textureSourceOffset: rl.Vector2 = {0, 0}, textureDestOffset: rl.Vector2 = {0, 0},
 ) -> string {
 
     tag := tag
