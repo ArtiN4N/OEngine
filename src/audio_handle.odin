@@ -71,7 +71,7 @@ destroy_AudioHandler :: proc(using handler: ^AudioHandler) {
     rl.CloseAudioDevice()
 }
 
-setAudioHandlerMusic :: proc(using handler: ^AudioHandler, tag: string, volume: f32) {
+setAudioHandlerMusic :: proc(using handler: ^AudioHandler, tag: string, volume: f32 = 0.5) {
     if currentMusic != nil {
         // Since we're swapping tracks, we should stop the current one first
         rl.StopMusicStream(currentMusic^)
