@@ -6,92 +6,73 @@ import "core:strings"
 
 import rl "vendor:raylib"
 
-OutLog :: struct {
-    logBuilder: strings.Builder,
-    loads: int,
-    frees: int,
-    timeElapsed: f32,
+loads: i32 = 0
+frees: i32 = 0
+time: f32 = 0.0
+
+writeToLog :: proc(data: cstring) {
+    rl.SaveFileText("log.txt", data)
 }
 
-init_OutLog :: proc() -> OutLog {
+stepLog :: proc(dt: f32) {
+    time += dt
+}
+
+writeFrameHeader :: proc(title: string) {
+    writeToLog(fmt.caprintf("\n----------%s FRAME----------\n", title))
+}
+
+writeEnterFrame :: proc() {
     curTime := time.now()
-
-    builder := strings.builder_make()
-
     hour, min, sec := time.clock_from_time(curTime)
 
-    fmt.sbprintf(
-        &builder, 
+    writeToLog(fmt.caprintf(
         "----------INIT FRAME----------\nExecuted at time %4d:%2d:%2d - %2d:%2d:%2d\n", 
         time.date(curTime), (hour - 7) % 24, min, sec
-    )
-
-    initText: [^]u8
-    rl.SaveFileText("log.txt", initText)
-
-    return {
-        builder,
-        0, 0,
-        0.0
-    }
+    ))
 }
 
-stepOutLog :: proc(using out: ^OutLog, dt: f32) {
-    timeElapsed += dt
-}
-
-writeToLog :: proc(using out: ^OutLog, data: string) {
-    fmt.sbprintf(&logBuilder, "%s -> logged at time %.2f\n", data, timeElapsed)
+writeExitFrame :: proc() {
+    writeToLog(fmt.caprintf(
+        "\n----------EXIT FRAME----------\nTOTAL LOADS: %3d\nTOTAL FREES: %3d\nLOADS == FREES: %t",
+        loads, frees, loads == frees
+    ))
 }
 
 writeTextureLoadToLog :: proc(using out: ^OutLog, tag: string, success: bool) {
     if !success {
-        writeToLog(out, fmt.tprintf("ERROR - Failed to load texture data from '%s'", tag))
+        writeToLog(fmt.caprintf("ERROR - Failed to load texture data from '%s'", tag))
         return
     }
-    writeToLog(out, fmt.tprintf("Loaded texture data from tag '%s'", tag))
+    writeToLog(fmt.caprintf("Loaded texture data from tag '%s'", tag))
     loads += 1
 }
 
-writeAudioLoadToLog :: proc(using out: ^OutLog, tag: string, success: bool) {
+writeAudioLoadToLog :: proc(tag: string, success: bool) {
     if !success {
-        writeToLog(out, fmt.tprintf("ERROR - Failed to load audio data from '%s'", tag))
+        writeToLog(fmt.caprintf("ERROR - Failed to load audio data from '%s'", tag))
         return
     }
-    writeToLog(out, fmt.tprintf("Loaded audio data from tag '%s'", tag))
+    writeToLog(out, fmt.caprintf("Loaded audio data from tag '%s'", tag))
     loads += 1
 }
 
-writeFileLoadToLog :: proc(using out: ^OutLog, tag: string) {
-    writeToLog(out, fmt.tprintf("Loaded file data from tag '%s'", tag))
+writeFileLoadToLog :: proc(tag: string) {
+    writeToLog(out, fmt.caprintf("Loaded file data from tag '%s'", tag))
     loads += 1
 }
 
-writeAllocToLog :: proc(using out: ^OutLog, varname: string) {
-    writeToLog(out, fmt.tprintf("Alloc'd memory to variable '%s'", varname))
+writeAllocToLog :: proc(varname: string) {
+    writeToLog(fmt.caprintf("Alloc'd memory to variable '%s'", varname))
     loads += 1
 }
 
-writeDataFreeToLog :: proc(using out: ^OutLog, tag: string) {
-    writeToLog(out, fmt.tprintf("Freed data from tag '%s'", tag))
+writeDataFreeToLog :: proc(tag: string) {
+    writeToLog(fmt.caprintf("Freed data from tag '%s'", tag))
     frees += 1
 }
 
-writeAllocFreeToLog :: proc(using out: ^OutLog, varname: string) {
-    writeToLog(out, fmt.tprintf("Freed memory from variable '%s'", varname))
+writeAllocFreeToLog :: proc(varname: string) {
+    writeToLog(fmt.caprintf("Freed memory from variable '%s'", varname))
     frees += 1
-}
-
-writeFrameHeader :: proc(using out: ^OutLog, title: string) {
-    fmt.sbprintf(&logBuilder, "\n----------%s FRAME----------\n", title)
-}
-
-writeLogToFile :: proc(using out: ^OutLog) {
-    fmt.sbprintf(
-        &logBuilder, 
-        "\n----------EXIT FRAME----------\nTOTAL LOADS: %3d\nTOTAL FREES: %3d\nLOADS == FREES: %t", 
-        loads, frees, loads == frees
-    )
-
-    rl.SaveFileText("log.txt", raw_data(strings.to_string(logBuilder)))
 }
