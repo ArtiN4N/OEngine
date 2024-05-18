@@ -42,7 +42,6 @@ main :: proc() {
         tag = "jump"
     )
 
-    // testing trackings
     ChangeSpriteAnimation(&state.spriteHandler.spriteAliases[newSprite], tag = "idle")
 
     writeFrameHeader("GAME")
